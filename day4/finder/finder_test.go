@@ -53,7 +53,7 @@ func TestSecondDiagonal(t *testing.T) {
 }
 
 func TestFindOcuranceInLine(t *testing.T) {
-	res := findOcuranceInLine("MMMSXXMASM", "XMAS")
+	res := findOccurrenceInLine("MMMSXXMASM", "XMAS")
 	if res != 1 {
 		t.Errorf("wrong")
 	}

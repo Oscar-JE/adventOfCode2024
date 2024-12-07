@@ -26,16 +26,46 @@ func (f *finder) consume(r rune) {
 	}
 }
 
-func FindOccuranceOfWord(mat matrix.Matrix[rune], word string) int {
-	lines := readingDirections(mat)
+func FindXmases(mat matrix.Matrix[rune]) int {
 	sum := 0
-	for _, line := range lines {
-		sum += findOcuranceInLine(line, word)
+	for i := 1; i < mat.GetNrRows()-1; i++ {
+		for j := 1; j < mat.GetNrCols()-1; j++ {
+			if mat.Get(i, j) != 'A' {
+				continue
+			}
+			word1 := []rune{mat.Get(i-1, j-1), mat.Get(i, j), mat.Get(i+1, j+1)}
+			word2 := []rune{mat.Get(i+1, j-1), mat.Get(i, j), mat.Get(i-1, j+1)}
+			if isMas(word1) && isMas(word2) {
+				sum++
+			}
+		}
 	}
 	return sum
 }
 
-func findOcuranceInLine(line string, word string) int {
+func isMas(word []rune) bool {
+	forward := string(word)
+	if forward == "MAS" {
+		return true
+	}
+	backwardsRunes := []rune{}
+	for i := len(word) - 1; i >= 0; i-- {
+		backwardsRunes = append(backwardsRunes, word[i])
+	}
+	backwards := string(backwardsRunes)
+	return backwards == "MAS"
+}
+
+func FindOccurrenceOfWord(mat matrix.Matrix[rune], word string) int {
+	lines := readingDirections(mat)
+	sum := 0
+	for _, line := range lines {
+		sum += findOccurrenceInLine(line, word)
+	}
+	return sum
+}
+
+func findOccurrenceInLine(line string, word string) int {
 	find := finder{[]rune(word), 0, 0}
 	for _, r := range line {
 		find.consume(r)

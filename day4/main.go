@@ -18,5 +18,5 @@ func main() {
 		row := runeMatrix.GetRow(i)
 		fmt.Println(string(row))
 	}
-	fmt.Println(finder.FindOccuranceOfWord(runeMatrix, "XMAS"))
+	fmt.Println(finder.FindXmases(runeMatrix))
 }
