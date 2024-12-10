@@ -20,3 +20,15 @@ func (v Vec2d) GetY() int {
 func Add(v1 Vec2d, v2 Vec2d) Vec2d {
 	return Init(v1.x+v2.x, v1.y+v2.y)
 }
+
+func Subtract(v1 Vec2d, v2 Vec2d) Vec2d {
+	return Init(v1.x-v2.x, v1.y-v2.y)
+}
+
+func ScalarMult(a int, v Vec2d) Vec2d {
+	return Init(v.x*a, v.y*a)
+}
+
+func Turn90Down(v Vec2d) Vec2d {
+	return Init(v.y, -v.x)
+}

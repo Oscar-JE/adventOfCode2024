@@ -38,6 +38,14 @@ func (m Matrix[C]) Get(row int, col int) C {
 	return m.values[index]
 }
 
+func (m *Matrix[C]) Set(row int, col int, val C) {
+	if !m.Inside(row, col) {
+		panic("Attempt set values outside matrix bonds")
+	}
+	index := m.indexFramRowAndCol(row, col)
+	m.values[index] = val
+}
+
 func (m Matrix[C]) GetRow(row int) []C {
 	res := []C{}
 	for j := range m.cols {
