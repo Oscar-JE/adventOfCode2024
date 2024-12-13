@@ -1,5 +1,7 @@
 package matrix
 
+import "fmt"
+
 // ska vara generic som kräver comparabel
 type Matrix[C comparable] struct {
 	values []C
@@ -52,4 +54,16 @@ func (m Matrix[C]) GetRow(row int) []C {
 		res = append(res, m.Get(row, j))
 	}
 	return res
+}
+
+func (m Matrix[C]) String() string {
+	retStr := "\r\n"
+	for i := range m.GetNrRows() {
+		row := m.GetRow(i)
+		for _, el := range row {
+			retStr += fmt.Sprint(el) + " "
+		}
+		retStr += "\r\n"
+	}
+	return retStr
 }
