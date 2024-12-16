@@ -32,3 +32,7 @@ func ScalarMult(a int, v Vec2d) Vec2d {
 func Turn90Down(v Vec2d) Vec2d {
 	return Init(v.y, -v.x)
 }
+
+func AbsSquared(v Vec2d) int {
+	return v.x*v.x + v.y*v.y
+}
