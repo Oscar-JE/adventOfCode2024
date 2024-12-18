@@ -46,14 +46,14 @@ func TestMultipleCircumCalls(t *testing.T) {
 	}
 }
 
-func TestFloodFill(t *testing.T) {
+func TestCircumAndAreaOfId(t *testing.T) {
 	lines := []string{"AA", "BA"}
-	field := ParseFromLines(lines)
-	areA, circumA := field.floodFill(vec.Init(0, 0))
+	var field Field = ParseFromLines(lines)
+	areA, circumA := field.circumAndAreaOfId("A")
 	if areA != 3 || circumA != 8 {
 		t.Errorf("Area A in TestFloodField does not get correct area of circumference")
 	}
-	areB, circumB := field.floodFill(vec.Init(1, 0))
+	areB, circumB := field.circumAndAreaOfId("B")
 	if areB != 1 || circumB != 4 {
 		t.Errorf("Area B in TestFloodField does not get correct area of circumference")
 	}

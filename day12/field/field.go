@@ -10,7 +10,7 @@ type Field struct {
 	plots matrix.Matrix[plantingPlot]
 }
 
-func (f Field) floodFill(startingPoint vec.Vec2d) (int, int) { // börjar röra oss mot det mer avancerade caset
+func (f Field) floodFill(startingPoint vec.Vec2d) (int, int) { // behöver inte flodd fill i detta läget
 	directions := []vec.Vec2d{vec.Init(1, 0), vec.Init(0, 1), vec.Init(-1, 0), vec.Init(0, -1)}
 	startingId := f.plots.Get(startingPoint.GetX(), startingPoint.GetY()).id
 	visited := make(map[vec.Vec2d]bool)
@@ -43,6 +43,35 @@ func (f Field) totalCircumference() int { // mer i testningssyfte
 	sum := f.sumOfAllRotations()
 	f.reset()
 	return sum
+}
+
+func (f Field) circumAndAreaOfId(id string) (int, int) {
+	plantsWithId := f.findPlots(id)
+	area := len(plantsWithId)
+	circumference := 0
+	for _, plant := range plantsWithId {
+		plant.rotate()
+	}
+	for _, plant := range plantsWithId {
+		circumference += plant.lengthOfRotations()
+	}
+	for _, plant := range plantsWithId {
+		plant.boarder.reset()
+	}
+	return area, circumference
+}
+
+func (f Field) findPlots(id string) []plantingPlot {
+	plants := []plantingPlot{}
+	for i := 0; i < f.plots.GetNrRows(); i++ {
+		for j := 0; j < f.plots.GetNrCols(); j++ {
+			plant := f.plots.Get(i, j)
+			if plant.id == id {
+				plants = append(plants, plant)
+			}
+		}
+	}
+	return plants
 }
 
 func (f Field) reset() {

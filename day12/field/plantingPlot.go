@@ -12,3 +12,11 @@ func Init(id string) plantingPlot {
 func (p plantingPlot) String() string {
 	return p.id
 }
+
+func (p plantingPlot) rotate() {
+	p.boarder.rotate()
+}
+
+func (p plantingPlot) lengthOfRotations() int {
+	return p.boarder.sumOfSquaredRotations()
+}
