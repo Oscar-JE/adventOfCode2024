@@ -3,6 +3,7 @@ package field
 import (
 	"adventofcode/geometry/matrix"
 	vec "adventofcode/geometry/vec2d"
+	"adventofcode/set"
 	"fmt"
 )
 
@@ -10,34 +11,59 @@ type Field struct {
 	plots matrix.Matrix[plantingPlot]
 }
 
-func (f Field) floodFill(startingPoint vec.Vec2d) (int, int) { // behöver inte flodd fill i detta läget
-	directions := []vec.Vec2d{vec.Init(1, 0), vec.Init(0, 1), vec.Init(-1, 0), vec.Init(0, -1)}
-	startingId := f.plots.Get(startingPoint.GetX(), startingPoint.GetY()).id
-	visited := make(map[vec.Vec2d]bool)
-	queue := []vec.Vec2d{startingPoint}
-	area := 0
+func (f Field) scoreOf(id string) int {
+	allWithId := f.findPlots(id)
+	splitedOnGroups := f.split(allWithId)
+	sumPrice := 0
+	for _, blob := range splitedOnGroups {
+		area := blob.Cardinality()
+		circum := f.circum(blob)
+		sumPrice += area * circum
+	}
+	return sumPrice
+}
+
+func (f Field) split(positions set.Set[vec.Vec2d]) []set.Set[vec.Vec2d] { //hoppar över att testa den direkt för att jag inte kommer på hur man gör ett set av sets
+	groups := []set.Set[vec.Vec2d]{}
+	for !positions.IsEmpty() {
+		pos := positions.GetAnElement()
+		currentSet := f.floodFill(pos)
+		groups = append(groups, currentSet)
+		positions = set.Diff(positions, currentSet)
+	}
+	return groups
+}
+
+func (f Field) floodFill(pos vec.Vec2d) set.Set[vec.Vec2d] {
+	targetId := f.plots.Get(pos.GetX(), pos.GetY()).id
+	var north, west, south, east vec.Vec2d = vec.Init(-1, 0), vec.Init(0, -1), vec.Init(1, 0), vec.Init(0, 1)
+	visited := set.Init([]vec.Vec2d{})
+	queue := []vec.Vec2d{}
+	if f.plots.Inside(pos.GetX(), pos.GetY()) {
+		queue = append(queue, pos)
+	}
 	for len(queue) > 0 {
-		currentVec := queue[0]
+		currentPos := queue[0]
 		queue = queue[1:]
-		visited[currentVec] = true
-		f.plots.Get(currentVec.GetX(), currentVec.GetY()).boarder.rotate()
-		area++
-		for _, v := range directions {
-			candidate := vec.Add(currentVec, v)
-			if !visited[candidate] && f.plots.Inside(candidate.GetX(), candidate.GetY()) && f.plots.Get(candidate.GetX(), candidate.GetY()).id == startingId {
-				queue = append(queue, candidate)
+		visited.Add(currentPos)
+		newCandidates := []vec.Vec2d{vec.Add(currentPos, north), vec.Add(currentPos, west), vec.Add(currentPos, south), vec.Add(currentPos, east)}
+		for _, newCandidate := range newCandidates {
+			if visited.Has(newCandidate) || !f.plots.Inside(newCandidate.GetX(), newCandidate.GetY()) {
+				continue
+			}
+			candidateId := f.plots.Get(newCandidate.GetX(), newCandidate.GetY()).id
+			if candidateId == targetId {
+				queue = append(queue, newCandidate)
 			}
 		}
 	}
-	circumference := f.sumOfAllRotations()
-	f.reset()
-	return area, circumference
+	return visited
 }
 
-func (f Field) totalCircumference() int { // mer i testningssyfte
+func (f Field) totalCircumference() int {
 	for i := 0; i < f.plots.GetNrRows(); i++ {
 		for j := 0; j < f.plots.GetNrCols(); j++ {
-			f.plots.Get(i, j).boarder.rotate()
+			f.plots.Get(i, j).rotate()
 		}
 	}
 	sum := f.sumOfAllRotations()
@@ -45,33 +71,31 @@ func (f Field) totalCircumference() int { // mer i testningssyfte
 	return sum
 }
 
-func (f Field) circumAndAreaOfId(id string) (int, int) {
-	plantsWithId := f.findPlots(id)
-	area := len(plantsWithId)
-	circumference := 0
-	for _, plant := range plantsWithId {
-		plant.rotate()
+func (f Field) circum(positions set.Set[vec.Vec2d]) int {
+	for _, pos := range positions.GetElements() {
+		f.plots.Get(pos.GetX(), pos.GetY()).rotate()
 	}
-	for _, plant := range plantsWithId {
-		circumference += plant.lengthOfRotations()
+	sum := 0
+	for _, pos := range positions.GetElements() {
+		sum += f.plots.Get(pos.GetX(), pos.GetY()).lengthOfRotations()
 	}
-	for _, plant := range plantsWithId {
-		plant.boarder.reset()
+	for _, pos := range positions.GetElements() {
+		f.plots.Get(pos.GetX(), pos.GetY()).reset()
 	}
-	return area, circumference
+	return sum
 }
 
-func (f Field) findPlots(id string) []plantingPlot {
-	plants := []plantingPlot{}
+func (f Field) findPlots(id string) set.Set[vec.Vec2d] {
+	plantsPos := set.Init([]vec.Vec2d{})
 	for i := 0; i < f.plots.GetNrRows(); i++ {
 		for j := 0; j < f.plots.GetNrCols(); j++ {
 			plant := f.plots.Get(i, j)
 			if plant.id == id {
-				plants = append(plants, plant)
+				plantsPos.Add(vec.Init(i, j))
 			}
 		}
 	}
-	return plants
+	return plantsPos
 }
 
 func (f Field) reset() {
@@ -84,18 +108,9 @@ func (f Field) reset() {
 
 func (f Field) sumOfAllRotations() int {
 	sum := 0
-	// summera längs till höger
-	for i := 0; i < f.plots.GetNrRows(); i++ {
-		sum += f.plots.Get(i, f.plots.GetNrCols()-1).boarder.eastAbsSquared()
-	}
-	// summera längst ner
-	for j := 0; j < f.plots.GetNrCols(); j++ {
-		sum += f.plots.Get(f.plots.GetNrRows()-1, j).boarder.southAbsSquared()
-	}
-	// summera rästen
 	for i := 0; i < f.plots.GetNrRows(); i++ {
 		for j := 0; j < f.plots.GetNrCols(); j++ {
-			sum += f.plots.Get(i, j).boarder.northAbsSquared() + f.plots.Get(i, j).boarder.westAbsSquared()
+			sum += f.plots.Get(i, j).lengthOfRotations()
 		}
 	}
 

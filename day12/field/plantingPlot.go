@@ -20,3 +20,7 @@ func (p plantingPlot) rotate() {
 func (p plantingPlot) lengthOfRotations() int {
 	return p.boarder.sumOfSquaredRotations()
 }
+
+func (p plantingPlot) reset() {
+	p.boarder.reset()
+}

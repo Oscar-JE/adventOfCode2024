@@ -2,6 +2,7 @@ package field
 
 import (
 	vec "adventofcode/geometry/vec2d"
+	"adventofcode/set"
 	"fmt"
 	"testing"
 )
@@ -46,15 +47,40 @@ func TestMultipleCircumCalls(t *testing.T) {
 	}
 }
 
-func TestCircumAndAreaOfId(t *testing.T) {
-	lines := []string{"AA", "BA"}
-	var field Field = ParseFromLines(lines)
-	areA, circumA := field.circumAndAreaOfId("A")
-	if areA != 3 || circumA != 8 {
-		t.Errorf("Area A in TestFloodField does not get correct area of circumference")
+func TestFloodFillCorner(t *testing.T) {
+	lines := []string{"ABA", "BBB", "ABA"}
+	field := ParseFromLines(lines)
+	res := field.floodFill(vec.Init(0, 0))
+	exp := set.Init([]vec.Vec2d{vec.Init(0, 0)})
+	if !set.Eq(res, exp) {
+		t.Errorf("flood fill failed for closed corner case :P")
 	}
-	areB, circumB := field.circumAndAreaOfId("B")
-	if areB != 1 || circumB != 4 {
-		t.Errorf("Area B in TestFloodField does not get correct area of circumference")
+}
+
+func TestFloodFillMiddelUp(t *testing.T) {
+	lines := []string{"ABA", "BBB", "ABA"}
+	field := ParseFromLines(lines)
+	res := field.floodFill(vec.Init(0, 1))
+	exp := set.Init([]vec.Vec2d{vec.Init(0, 1), vec.Init(1, 0), vec.Init(1, 1), vec.Init(1, 2), vec.Init(2, 1)})
+	if !set.Eq(exp, res) {
+		t.Errorf(" flood fill failed for center case")
+	}
+}
+
+func TestScoreOfAingles(t *testing.T) {
+	lines := []string{"ABA", "BBB", "ABA"}
+	field := ParseFromLines(lines)
+	resA := field.scoreOf("A")
+	if resA != 16 {
+		t.Errorf("four singles not calculated correctly")
+	}
+}
+
+func TestScoresOfMiddle(t *testing.T) {
+	lines := []string{"ABA", "BBB", "ABA"}
+	field := ParseFromLines(lines)
+	resB := field.scoreOf("B")
+	if resB != 45 {
+		t.Errorf(" our expectations does not meet the result")
 	}
 }
