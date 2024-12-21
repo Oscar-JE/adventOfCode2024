@@ -11,16 +11,49 @@ type Field struct {
 	plots matrix.Matrix[plantingPlot]
 }
 
+func (f Field) Score() int {
+	uncountedPlots := f.allPositions()
+	sum := 0
+	for !uncountedPlots.IsEmpty() {
+		pos := uncountedPlots.GetAnElement()
+		id := f.plots.Get(pos.GetX(), pos.GetY()).id
+		fmt.Println("current id : " + id)
+		fmt.Println("current position", pos)
+		idBlob := f.findPlots(id)
+		sum += f.scoreOfIdBlob(idBlob)
+		uncountedPlots = set.Diff(uncountedPlots, idBlob)
+	}
+	return sum
+}
+
+func (f Field) allPositions() set.Set[vec.Vec2d] {
+	posSet := set.Init([]vec.Vec2d{})
+	for i := 0; i < f.plots.GetNrRows(); i++ {
+		for j := 0; j < f.plots.GetNrCols(); j++ {
+			posSet.Add(vec.Init(i, j))
+		}
+	}
+	return posSet
+}
+
 func (f Field) scoreOf(id string) int {
 	allWithId := f.findPlots(id)
-	splitedOnGroups := f.split(allWithId)
+	return f.scoreOfIdBlob(allWithId)
+}
+
+func (f Field) scoreOfIdBlob(blob set.Set[vec.Vec2d]) int {
+	splittedOnGroups := f.split(blob)
 	sumPrice := 0
-	for _, blob := range splitedOnGroups {
-		area := blob.Cardinality()
-		circum := f.circum(blob)
-		sumPrice += area * circum
+	for _, blob := range splittedOnGroups {
+		sumPrice += f.scoreOfBlob(blob)
 	}
 	return sumPrice
+}
+
+func (f Field) scoreOfBlob(blob set.Set[vec.Vec2d]) int {
+	area := blob.Cardinality()
+	circum := f.circum(blob)
+	return area * circum
 }
 
 func (f Field) split(positions set.Set[vec.Vec2d]) []set.Set[vec.Vec2d] { //hoppar över att testa den direkt för att jag inte kommer på hur man gör ett set av sets
@@ -53,7 +86,8 @@ func (f Field) floodFill(pos vec.Vec2d) set.Set[vec.Vec2d] {
 			}
 			candidateId := f.plots.Get(newCandidate.GetX(), newCandidate.GetY()).id
 			if candidateId == targetId {
-				queue = append(queue, newCandidate)
+				queue = append(queue, newCandidate) // här borde jag kunna lägga in dem i visite oxså
+				visited.Add(newCandidate)
 			}
 		}
 	}
@@ -72,14 +106,15 @@ func (f Field) totalCircumference() int {
 }
 
 func (f Field) circum(positions set.Set[vec.Vec2d]) int {
-	for _, pos := range positions.GetElements() {
+	vecPositions := positions.GetElements()
+	for _, pos := range vecPositions {
 		f.plots.Get(pos.GetX(), pos.GetY()).rotate()
 	}
 	sum := 0
-	for _, pos := range positions.GetElements() {
+	for _, pos := range vecPositions {
 		sum += f.plots.Get(pos.GetX(), pos.GetY()).lengthOfRotations()
 	}
-	for _, pos := range positions.GetElements() {
+	for _, pos := range vecPositions {
 		f.plots.Get(pos.GetX(), pos.GetY()).reset()
 	}
 	return sum

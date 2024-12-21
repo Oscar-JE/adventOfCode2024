@@ -21,7 +21,7 @@ func (s swirl) rotate() {
 	*s.north = vec.Add(*s.north, vec.Init(0, -1))
 	*s.west = vec.Add(*s.west, vec.Init(1, 0))
 	*s.south = vec.Add(*s.south, vec.Init(0, 1))
-	*s.east = vec.Add(*s.east, vec.Add(*s.east, vec.Init(-1, 0)))
+	*s.east = vec.Add(*s.east, vec.Init(-1, 0))
 }
 
 func (s swirl) reset() {

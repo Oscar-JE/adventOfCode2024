@@ -4,6 +4,8 @@ import (
 	vec "adventofcode/geometry/vec2d"
 	"adventofcode/set"
 	"fmt"
+	"os"
+	"strings"
 	"testing"
 )
 
@@ -80,7 +82,27 @@ func TestScoresOfMiddle(t *testing.T) {
 	lines := []string{"ABA", "BBB", "ABA"}
 	field := ParseFromLines(lines)
 	resB := field.scoreOf("B")
-	if resB != 45 {
+	if resB != 60 {
 		t.Errorf(" our expectations does not meet the result")
 	}
+}
+
+func TestTotalScore(t *testing.T) {
+	lines := []string{"ABA", "BBB", "ABA"}
+	field := ParseFromLines(lines)
+	res := field.Score()
+	if res != 76 {
+		t.Errorf("not what we expected of 3 by 3 star")
+	}
+}
+
+func TestFailingFloodFillCase(t *testing.T) {
+	bytes, err := os.ReadFile("../big.txt")
+	if err != nil {
+		panic("error wile reading file")
+	}
+	content := string(bytes)
+	lines := strings.Split(content, "\n")
+	field := ParseFromLines(lines)
+	field.floodFill(vec.Init(36, 103))
 }
