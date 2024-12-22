@@ -19,8 +19,11 @@ func (f Field) Score() int {
 		id := f.plots.Get(pos.GetX(), pos.GetY()).id
 		fmt.Println("current id : " + id)
 		fmt.Println("current position", pos)
-		idBlob := f.findPlots(id)
-		sum += f.scoreOfIdBlob(idBlob)
+		idBlob := f.FindPlots(id)
+		fmt.Printf("length of blob set %d \n", idBlob.Cardinality())
+		partSum := f.ScoreOfIdBlob(idBlob)
+		fmt.Println(partSum)
+		sum += partSum
 		uncountedPlots = set.Diff(uncountedPlots, idBlob)
 	}
 	return sum
@@ -37,11 +40,11 @@ func (f Field) allPositions() set.Set[vec.Vec2d] {
 }
 
 func (f Field) scoreOf(id string) int {
-	allWithId := f.findPlots(id)
-	return f.scoreOfIdBlob(allWithId)
+	allWithId := f.FindPlots(id)
+	return f.ScoreOfIdBlob(allWithId)
 }
 
-func (f Field) scoreOfIdBlob(blob set.Set[vec.Vec2d]) int {
+func (f Field) ScoreOfIdBlob(blob set.Set[vec.Vec2d]) int {
 	splittedOnGroups := f.split(blob)
 	sumPrice := 0
 	for _, blob := range splittedOnGroups {
@@ -52,11 +55,12 @@ func (f Field) scoreOfIdBlob(blob set.Set[vec.Vec2d]) int {
 
 func (f Field) scoreOfBlob(blob set.Set[vec.Vec2d]) int {
 	area := blob.Cardinality()
-	circum := f.circum(blob)
-	return area * circum
+	//circum := f.circum(blob)
+	nrSides := f.nrOfSides(blob)
+	return area * nrSides
 }
 
-func (f Field) split(positions set.Set[vec.Vec2d]) []set.Set[vec.Vec2d] { //hoppar över att testa den direkt för att jag inte kommer på hur man gör ett set av sets
+func (f Field) split(positions set.Set[vec.Vec2d]) []set.Set[vec.Vec2d] {
 	groups := []set.Set[vec.Vec2d]{}
 	for !positions.IsEmpty() {
 		pos := positions.GetAnElement()
@@ -86,7 +90,7 @@ func (f Field) floodFill(pos vec.Vec2d) set.Set[vec.Vec2d] {
 			}
 			candidateId := f.plots.Get(newCandidate.GetX(), newCandidate.GetY()).id
 			if candidateId == targetId {
-				queue = append(queue, newCandidate) // här borde jag kunna lägga in dem i visite oxså
+				queue = append(queue, newCandidate)
 				visited.Add(newCandidate)
 			}
 		}
@@ -120,7 +124,36 @@ func (f Field) circum(positions set.Set[vec.Vec2d]) int {
 	return sum
 }
 
-func (f Field) findPlots(id string) set.Set[vec.Vec2d] {
+func (f Field) nrOfSides(positions set.Set[vec.Vec2d]) int {
+	vecPositions := positions.GetElements()
+	for _, pos := range vecPositions {
+		f.plots.Get(pos.GetX(), pos.GetY()).rotate()
+	}
+	positionsWithNonZeroRotations := []vec.Vec2d{}
+	for _, pos := range vecPositions {
+		if f.plots.Get(pos.GetX(), pos.GetY()).lengthOfRotations() > 0 {
+			positionsWithNonZeroRotations = append(positionsWithNonZeroRotations, pos)
+		} else {
+			fmt.Println(pos)
+		}
+	}
+	posAndDir := f.findPosAndDirections(positionsWithNonZeroRotations)
+	for _, pos := range vecPositions {
+		f.plots.Get(pos.GetX(), pos.GetY()).reset()
+	}
+	return nrSides(posAndDir)
+}
+
+func (f Field) findPosAndDirections(positions []vec.Vec2d) []positionAndDirection {
+	allPossitionsAndDirections := []positionAndDirection{}
+	for _, relevantPlot := range positions {
+		plot := f.plots.Get(relevantPlot.GetX(), relevantPlot.GetY())
+		allPossitionsAndDirections = append(allPossitionsAndDirections, plot.verticesAndDirections(relevantPlot)...)
+	}
+	return reduce(allPossitionsAndDirections)
+}
+
+func (f Field) FindPlots(id string) set.Set[vec.Vec2d] {
 	plantsPos := set.Init([]vec.Vec2d{})
 	for i := 0; i < f.plots.GetNrRows(); i++ {
 		for j := 0; j < f.plots.GetNrCols(); j++ {

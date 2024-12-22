@@ -8,12 +8,17 @@ import (
 )
 
 func main() {
-	bytes, err := os.ReadFile("big.txt")
+	f := parse("short.txt")
+	fmt.Println(f.Score())
+}
+
+func parse(fileName string) field.Field {
+	bytes, err := os.ReadFile("short.txt")
 	if err != nil {
 		panic("error wile reading file")
 	}
 	content := string(bytes)
 	lines := strings.Split(content, "\n")
 	f := field.ParseFromLines(lines)
-	fmt.Println(f.Score())
+	return f
 }

@@ -4,8 +4,6 @@ import (
 	vec "adventofcode/geometry/vec2d"
 	"adventofcode/set"
 	"fmt"
-	"os"
-	"strings"
 	"testing"
 )
 
@@ -96,13 +94,13 @@ func TestTotalScore(t *testing.T) {
 	}
 }
 
-func TestFailingFloodFillCase(t *testing.T) {
-	bytes, err := os.ReadFile("../big.txt")
-	if err != nil {
-		panic("error wile reading file")
-	}
-	content := string(bytes)
-	lines := strings.Split(content, "\n")
+func TestLshapNrSides(t *testing.T) {
+	lines := []string{"BB",
+		"AB"}
 	field := ParseFromLines(lines)
-	field.floodFill(vec.Init(36, 103))
+	idGroup := field.FindPlots("B")
+	res := field.nrOfSides(idGroup)
+	if res != 7 {
+		t.Errorf("smal L shape failed for nr of sides")
+	}
 }

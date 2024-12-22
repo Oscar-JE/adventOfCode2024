@@ -34,19 +34,3 @@ func (s swirl) reset() {
 func (s swirl) sumOfSquaredRotations() int {
 	return vec.AbsSquared(*s.north) + vec.AbsSquared(*s.west) + vec.AbsSquared(*s.south) + vec.AbsSquared(*s.east)
 }
-
-func (s swirl) northAbsSquared() int {
-	return vec.AbsSquared(*s.north)
-}
-
-func (s swirl) westAbsSquared() int {
-	return vec.AbsSquared(*s.west)
-}
-
-func (s swirl) southAbsSquared() int {
-	return vec.AbsSquared(*s.south)
-}
-
-func (s swirl) eastAbsSquared() int {
-	return vec.AbsSquared(*s.east)
-}
