@@ -37,23 +37,31 @@ func reduce(positionsDirs []positionAndDirection) []positionAndDirection {
 	return reduced
 }
 
+type link struct {
+	start vec.Vec2d
+	end   vec.Vec2d
+}
+
 func positionOrder(pDir []positionAndDirection) []positionAndDirection {
 	sorted := []positionAndDirection{}
 	if len(pDir) == 0 {
 		panic("should always be a complete loop at this point")
 	}
-	position := pDir[0].position
-	// kör det långsamaste sättet först
-	// här tappar jag antagligen punkter
-	for i := 0; i < len(pDir); i++ {
-		for j := 0; j < len(pDir); j++ {
-			posDir := pDir[j]
-			if posDir.position == position {
-				sorted = append(sorted, posDir)
-				position = posDir.nextPosition()
+	linkes := []link{}
+	for _, el := range pDir {
+		linkes = append(linkes, link{el.position, vec.Add(el.position, el.direction)})
+	}
+	sortedLinkes := []link{}
+	sortedLinkes = append(sortedLinkes, linkes[0])
+	for i := 1; i < len(linkes); i++ {
+		lastLink := sortedLinkes[i-1]
+		for _, linkC := range linkes {
+			if lastLink.end == linkC.start {
+				sortedLinkes = append(sortedLinkes, linkC)
 				break
 			}
 		}
 	}
+
 	return sorted
 }

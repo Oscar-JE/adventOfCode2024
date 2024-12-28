@@ -94,6 +94,26 @@ func TestTotalScore(t *testing.T) {
 	}
 }
 
+func TestSingleNrSides(t *testing.T) {
+	lines := []string{"A"}
+	f := ParseFromLines(lines)
+	idG := f.FindPlots("A")
+	res := f.nrOfSides(idG)
+	if res != 4 {
+		t.Errorf("nr of sides total failure")
+	}
+}
+
+func TestDoubleNrSides(t *testing.T) {
+	lines := []string{"AA"}
+	f := ParseFromLines(lines)
+	idG := f.FindPlots("A")
+	res := f.nrOfSides(idG)
+	if res != 4 {
+		t.Errorf("nr of sides total failure")
+	}
+}
+
 func TestLshapNrSides(t *testing.T) {
 	lines := []string{"BB",
 		"AB"}
@@ -101,6 +121,6 @@ func TestLshapNrSides(t *testing.T) {
 	idGroup := field.FindPlots("B")
 	res := field.nrOfSides(idGroup)
 	if res != 7 {
-		t.Errorf("smal L shape failed for nr of sides")
+		t.Errorf("small L shape failed for nr of sides")
 	}
 }
