@@ -148,9 +148,11 @@ func (f Field) findPosAndDirections(positions []vec.Vec2d) []positionAndDirectio
 	allPossitionsAndDirections := []positionAndDirection{}
 	for _, relevantPlot := range positions {
 		plot := f.plots.Get(relevantPlot.GetX(), relevantPlot.GetY())
-		allPossitionsAndDirections = append(allPossitionsAndDirections, plot.verticesAndDirections(relevantPlot)...)
+		verticesAndEdges := plot.verticesAndDirections(relevantPlot)
+		allPossitionsAndDirections = append(allPossitionsAndDirections, verticesAndEdges...)
+
 	}
-	return reduce(allPossitionsAndDirections)
+	return allPossitionsAndDirections
 }
 
 func (f Field) FindPlots(id string) set.Set[vec.Vec2d] {

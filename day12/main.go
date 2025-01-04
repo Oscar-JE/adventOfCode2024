@@ -13,7 +13,7 @@ func main() {
 }
 
 func parse(fileName string) field.Field {
-	bytes, err := os.ReadFile("short.txt")
+	bytes, err := os.ReadFile(fileName)
 	if err != nil {
 		panic("error wile reading file")
 	}

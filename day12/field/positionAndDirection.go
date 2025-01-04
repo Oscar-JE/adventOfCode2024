@@ -26,7 +26,7 @@ func prevIndex(index int, len int) int {
 }
 
 func reduce(positionsDirs []positionAndDirection) []positionAndDirection {
-	reduced := []positionAndDirection{}
+	reduced := []positionAndDirection{} // här antar vi att de kommer i ordning vilket inte behöver vara sant
 	for i := 0; i < len(positionsDirs); i++ {
 		prevIndex := prevIndex(i, len(positionsDirs))
 		if positionsDirs[prevIndex].direction != positionsDirs[i].direction {
@@ -62,6 +62,8 @@ func positionOrder(pDir []positionAndDirection) []positionAndDirection {
 			}
 		}
 	}
-
+	for _, sortedLink := range sortedLinkes {
+		sorted = append(sorted, positionAndDirection{sortedLink.start, vec.Subtract(sortedLink.end, sortedLink.start)})
+	}
 	return sorted
 }

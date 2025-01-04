@@ -120,7 +120,7 @@ func TestLshapNrSides(t *testing.T) {
 	field := ParseFromLines(lines)
 	idGroup := field.FindPlots("B")
 	res := field.nrOfSides(idGroup)
-	if res != 7 {
+	if res != 6 {
 		t.Errorf("small L shape failed for nr of sides")
 	}
 }
