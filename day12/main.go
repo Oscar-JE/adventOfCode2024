@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-	f := parse("short.txt")
+	f := parse("short3.txt")
 	fmt.Println(f.Score())
 }
 
