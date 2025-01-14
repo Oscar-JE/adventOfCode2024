@@ -125,20 +125,18 @@ func (f Field) circum(positions set.Set[vec.Vec2d]) int {
 }
 
 func (f Field) nrOfSides(positions set.Set[vec.Vec2d]) int {
-	vecPositions := positions.GetElements()
-	for _, pos := range vecPositions {
+	coordinates := positions.GetElements()
+	for _, pos := range coordinates {
 		f.plots.Get(pos.GetX(), pos.GetY()).rotate()
 	}
 	positionsWithNonZeroRotations := []vec.Vec2d{}
-	for _, pos := range vecPositions {
+	for _, pos := range coordinates {
 		if f.plots.Get(pos.GetX(), pos.GetY()).lengthOfRotations() > 0 {
 			positionsWithNonZeroRotations = append(positionsWithNonZeroRotations, pos)
-		} else {
-			fmt.Println(pos)
 		}
 	}
 	posAndDir := f.findPosAndDirections(positionsWithNonZeroRotations)
-	for _, pos := range vecPositions {
+	for _, pos := range coordinates {
 		f.plots.Get(pos.GetX(), pos.GetY()).reset()
 	}
 	return nrSides(posAndDir)

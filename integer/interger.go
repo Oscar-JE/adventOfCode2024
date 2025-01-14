@@ -8,3 +8,14 @@ func NumberOfDigits(num int) int {
 	}
 	return numDevisionBy10 + 1
 }
+
+func Max(a int, b int) int {
+	if a <= b {
+		return b
+	}
+	return a
+}
+
+func Positive(a int) int {
+	return Max(a, -a)
+}

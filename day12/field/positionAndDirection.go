@@ -51,7 +51,7 @@ func positionOrder(pDir []positionAndDirection) []positionAndDirection {
 	for _, el := range pDir {
 		linkes = append(linkes, link{el.position, vec.Add(el.position, el.direction)})
 	}
-	sortedLinkes := []link{}
+	sortedLinkes := []link{} // kringer om intärnloop i loopen
 	sortedLinkes = append(sortedLinkes, linkes[0])
 	for i := 1; i < len(linkes); i++ {
 		lastLink := sortedLinkes[i-1]

@@ -29,6 +29,10 @@ func ScalarMult(a int, v Vec2d) Vec2d {
 	return Init(v.x*a, v.y*a)
 }
 
+func DotProduct(a Vec2d, b Vec2d) int {
+	return a.x*b.x + a.y*b.y
+}
+
 func Turn90Down(v Vec2d) Vec2d {
 	return Init(v.y, -v.x)
 }
