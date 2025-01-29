@@ -1,40 +1,50 @@
 package field
 
-import vec "adventofcode/geometry/vec2d"
+import (
+	vec "adventofcode/geometry/vec2d"
+)
 
 type positionAndDirection struct {
 	position  vec.Vec2d
 	direction vec.Vec2d
 }
 
-func (p positionAndDirection) nextPosition() vec.Vec2d {
-	return vec.Add(p.position, p.direction)
-}
-
 func nrSides(positionsDirs []positionAndDirection) int {
-	positionsDirs = positionOrder(positionsDirs)
-	reduced := reduce(positionsDirs)
-	return len(reduced)
-}
-
-func prevIndex(index int, len int) int {
-	prevIndex := index - 1
-	if prevIndex < 0 {
-		return len - 1
+	loops := findLoops(positionsDirs)
+	nrSides := 0
+	for _, l := range loops {
+		nrSides += l.nrSides()
 	}
-	return prevIndex
+	return nrSides
 }
 
-func reduce(positionsDirs []positionAndDirection) []positionAndDirection {
-	reduced := []positionAndDirection{} // här antar vi att de kommer i ordning vilket inte behöver vara sant
-	for i := 0; i < len(positionsDirs); i++ {
-		prevIndex := prevIndex(i, len(positionsDirs))
-		if positionsDirs[prevIndex].direction != positionsDirs[i].direction {
-			reduced = append(reduced, positionsDirs[i])
+func findLoops(positionDirs []positionAndDirection) []loop {
+	loops := []loop{}
+	unused := positionDirs
+	for len(unused) > 0 {
+		u, newLoop := findLoop(unused)
+		unused = u
+		loops = append(loops, newLoop)
+	}
+	return loops
+}
+
+func findLoop(positionDir []positionAndDirection) ([]positionAndDirection, loop) {
+	unused := positionDir
+	unusedNext := []positionAndDirection{}
+	lp := loop{}
+	for !lp.isLoop() {
+		for _, posDir := range positionDir {
+			lk := link{posDir.position, vec.Add(posDir.position, posDir.direction)}
+			added := lp.append(lk)
+			if !added {
+				unusedNext = append(unusedNext, posDir)
+			}
 		}
+		unused = unusedNext
+		unusedNext = []positionAndDirection{}
 	}
-
-	return reduced
+	return unused, lp
 }
 
 type link struct {
@@ -42,28 +52,6 @@ type link struct {
 	end   vec.Vec2d
 }
 
-func positionOrder(pDir []positionAndDirection) []positionAndDirection {
-	sorted := []positionAndDirection{}
-	if len(pDir) == 0 {
-		panic("should always be a complete loop at this point")
-	}
-	linkes := []link{}
-	for _, el := range pDir {
-		linkes = append(linkes, link{el.position, vec.Add(el.position, el.direction)})
-	}
-	sortedLinkes := []link{} // kringer om intärnloop i loopen
-	sortedLinkes = append(sortedLinkes, linkes[0])
-	for i := 1; i < len(linkes); i++ {
-		lastLink := sortedLinkes[i-1]
-		for _, linkC := range linkes {
-			if lastLink.end == linkC.start {
-				sortedLinkes = append(sortedLinkes, linkC)
-				break
-			}
-		}
-	}
-	for _, sortedLink := range sortedLinkes {
-		sorted = append(sorted, positionAndDirection{sortedLink.start, vec.Subtract(sortedLink.end, sortedLink.start)})
-	}
-	return sorted
+func (l link) direction() vec.Vec2d {
+	return vec.Subtract(l.end, l.start)
 }
