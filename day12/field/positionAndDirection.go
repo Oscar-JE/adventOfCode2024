@@ -19,6 +19,12 @@ func nrSides(positionsDirs []positionAndDirection) int {
 }
 
 func findLoops(positionDirs []positionAndDirection) []loop {
+	links := []link{}
+	for _, posDir := range positionDir {
+		lk := link{posDir.position, vec.Add(posDir.position, posDir.direction)}
+		links = append(links, lk)
+
+	}
 	loops := []loop{}
 	unused := positionDirs
 	for len(unused) > 0 {
@@ -29,20 +35,13 @@ func findLoops(positionDirs []positionAndDirection) []loop {
 	return loops
 }
 
-func findLoop(positionDir []positionAndDirection) ([]positionAndDirection, loop) {
-	unused := positionDir
-	unusedNext := []positionAndDirection{}
+func findLoop(positionDir []link) ([]positionAndDirection, loop) {
 	lp := loop{}
+	links := []link{}
 	for !lp.isLoop() {
-		for _, posDir := range positionDir {
-			lk := link{posDir.position, vec.Add(posDir.position, posDir.direction)}
-			added := lp.append(lk)
-			if !added {
-				unusedNext = append(unusedNext, posDir)
-			}
+		for _, lk := range links {
+			lp.append(lk)
 		}
-		unused = unusedNext
-		unusedNext = []positionAndDirection{}
 	}
 	return unused, lp
 }

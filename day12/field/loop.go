@@ -18,6 +18,10 @@ func (l loop) lastLink() link {
 }
 
 func (l *loop) append(next link) bool {
+	if len(l.links) == 0 {
+		l.links = append(l.links, next)
+		return true
+	}
 	last := l.lastLink()
 	if last.end == next.start {
 		l.links = append(l.links, next)
