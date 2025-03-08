@@ -1,5 +1,9 @@
 package vec
 
+import (
+	"adventofcode/integer"
+)
+
 type Vec2d struct {
 	x int
 	y int
@@ -29,6 +33,10 @@ func ScalarMult(a int, v Vec2d) Vec2d {
 	return Init(v.x*a, v.y*a)
 }
 
+func ScalarDiv(a int, v Vec2d) Vec2d {
+	return Init(v.x/a, v.y/a)
+}
+
 func DotProduct(a Vec2d, b Vec2d) int {
 	return a.x*b.x + a.y*b.y
 }
@@ -39,4 +47,14 @@ func Turn90Down(v Vec2d) Vec2d {
 
 func AbsSquared(v Vec2d) int {
 	return v.x*v.x + v.y*v.y
+}
+
+func Parallel(v1 Vec2d, v2 Vec2d) bool {
+	dotProd := DotProduct(v1, v2)
+	projectedLen := integer.Positive(dotProd)
+	return projectedLen*projectedLen == AbsSquared(v1)*AbsSquared(v2)
+}
+
+func (v Vec2d) NonZero() bool {
+	return integer.Positive(v.x) > 0 || integer.Positive(v.y) > 0
 }
