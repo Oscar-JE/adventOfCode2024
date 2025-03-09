@@ -19,3 +19,25 @@ func Max(a int, b int) int {
 func Positive(a int) int {
 	return Max(a, -a)
 }
+
+func remainder(dividend int, divider int) int {
+	if dividend < 0 || divider < 0 {
+		return 0
+	}
+	if divider == 0 {
+		return dividend
+	}
+	n := dividend / divider
+	return dividend - n*divider
+}
+
+func GCD(a int, b int) int {
+	if a < b {
+		return GCD(b, a)
+	}
+	if b == 0 {
+		return a
+	}
+	remainder := remainder(a, b)
+	return GCD(b, remainder)
+}

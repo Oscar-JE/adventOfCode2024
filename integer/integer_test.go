@@ -17,3 +17,12 @@ func TestNegativeNumberOfDigits(t *testing.T) {
 		t.Errorf("expected 4 digits")
 	}
 }
+
+func TestGCD(t *testing.T) {
+	if GCD(3, 5) != 1 {
+		t.Errorf("DIfferent Primes have a gcd of 1 ")
+	}
+	if GCD(50, 30) != 10 {
+		t.Errorf(" GCD 50,30 should be 10")
+	}
+}
