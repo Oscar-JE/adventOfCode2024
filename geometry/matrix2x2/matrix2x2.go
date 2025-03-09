@@ -47,8 +47,8 @@ func (m Matrix2x2) Solve(target vec.Vec2d) (SolutionSet, error) {
 	}
 	if m.HasSingleSolution() {
 		unscaledInverse, scale := m.inverse()
-		unscaledAns := unscaledInverse.vecMul(target)
-		ans := vec.ScalarDiv(scale, unscaledAns)
+		unscaledAns := unscaledInverse.VecMul(target)
+		ans := vec.ScalarDiv(scale, unscaledAns) // här sker en heltalsavrundning , inte bra
 		return SolutionSet{aSolPoint: ans, directions: []vec.Vec2d{}}, nil
 	}
 	if m.HasMultipleSolutions(target) {
@@ -67,7 +67,7 @@ func (m Matrix2x2) Solve(target vec.Vec2d) (SolutionSet, error) {
 	return SolutionSet{}, nil
 }
 
-func (m Matrix2x2) vecMul(v vec.Vec2d) vec.Vec2d {
+func (m Matrix2x2) VecMul(v vec.Vec2d) vec.Vec2d {
 	return vec.Add(vec.ScalarMult(v.GetX(), m.c0),
 		vec.ScalarMult(v.GetY(), m.c1))
 }

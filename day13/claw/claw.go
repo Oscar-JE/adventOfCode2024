@@ -20,16 +20,30 @@ type ButtonPair struct {
 }
 
 func minimumCost(buttons ButtonPair, prize vec.Vec2d) int {
-	// behöver skissa lite med papper och penna
-	// super simpelt om de inte är linjärt beroende
 	movMatrix := matrix2x2.Init(buttons.a.movement, buttons.b.movement)
 	hasSolution := movMatrix.HasSolution(prize)
 	if !hasSolution {
 		panic("Encountered a problem without solution")
 	}
 	solSet, _ := movMatrix.Solve(prize)
+	if movMatrix.VecMul(solSet.GetASolution()) != prize {
+		return 0
+	}
+
 	solutionSingle := solSet.GetASolution()
+	costVec := vec.Init(buttons.a.cost, buttons.b.cost)
+	if len(solSet.GetDirection()) == 1 {
+		dir := solSet.GetDirection()[0]
+		if vec.DotProduct(costVec, dir) < 0 {
+			for vec.Add(solutionSingle, dir).FirstQuadrant() {
+				solutionSingle = vec.Add(solutionSingle, dir)
+			}
+		} else if vec.DotProduct(costVec, dir) > 0 {
+			for vec.Subtract(solutionSingle, dir).FirstQuadrant() {
+				solutionSingle = vec.Subtract(solutionSingle, dir)
+			}
+		}
+	}
 	singleCost := buttons.a.cost*solutionSingle.GetX() + buttons.b.cost*solutionSingle.GetY()
-	//har kan vi möjligen reducera kostnaden något om vi tänker till lite
 	return singleCost
 }

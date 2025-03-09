@@ -68,3 +68,7 @@ func (v Vec2d) ScaledTo(other Vec2d) int {
 	}
 	return other.y / v.y
 }
+
+func (v Vec2d) FirstQuadrant() bool {
+	return v.x >= 0 && v.y >= 0
+}
