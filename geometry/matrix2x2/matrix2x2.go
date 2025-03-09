@@ -49,12 +49,20 @@ func (m Matrix2x2) Solve(target vec.Vec2d) (SolutionSet, error) {
 		unscaledInverse, scale := m.inverse()
 		unscaledAns := unscaledInverse.vecMul(target)
 		ans := vec.ScalarDiv(scale, unscaledAns)
-		return SolutionSet{aSolPoint: ans, direction: vec.Init(0, 0)}, nil
+		return SolutionSet{aSolPoint: ans, directions: []vec.Vec2d{}}, nil
 	}
 	if m.HasMultipleSolutions(target) {
-		if m.c0.NonZero() {
-
+		if !m.c0.NonZero() && !m.c1.NonZero() {
+			return SolutionSet{vec.Init(0, 0), []vec.Vec2d{vec.Init(1, 0), vec.Init(0, 1)}}, nil // detta är igentligen fel. Men Orkar vi köra med spann?
 		}
+		if m.c0.NonZero() {
+			scale := m.c0.ScaledTo(target)
+			directions := m.ZeroSpace()
+			return SolutionSet{vec.Init(scale, 0), directions}, nil
+		}
+		scale := m.c1.ScaledTo(target)
+		directions := m.ZeroSpace()
+		return SolutionSet{vec.Init(0, scale), directions}, nil
 	}
 	return SolutionSet{}, nil
 }
@@ -66,4 +74,25 @@ func (m Matrix2x2) vecMul(v vec.Vec2d) vec.Vec2d {
 
 func (m Matrix2x2) inverse() (Matrix2x2, int) {
 	return Init(vec.Init(m.c1.GetY(), -m.c0.GetY()), vec.Init(-m.c1.GetX(), m.c0.GetX())), m.c0.GetX()*m.c1.GetY() - m.c1.GetX()*m.c0.GetY()
+}
+
+func (m Matrix2x2) ZeroSpace() []vec.Vec2d {
+	if !m.linearlyDependent() {
+		return []vec.Vec2d{}
+	}
+	if !m.c0.NonZero() && !m.c1.NonZero() {
+		return []vec.Vec2d{vec.Init(1, 0), vec.Init(0, 1)}
+	}
+	if !m.c0.NonZero() {
+		return []vec.Vec2d{vec.Init(1, 0)}
+	}
+	if !m.c1.NonZero() {
+		return []vec.Vec2d{vec.Init(0, 1)}
+	}
+	scale := m.c0.ScaledTo(m.c1)
+	if scale == 0 {
+		scale = m.c1.ScaledTo(m.c0)
+		return []vec.Vec2d{vec.Init(1, -scale)}
+	}
+	return []vec.Vec2d{vec.Init(scale, -1)}
 }

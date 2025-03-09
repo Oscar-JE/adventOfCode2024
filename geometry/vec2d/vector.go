@@ -58,3 +58,13 @@ func Parallel(v1 Vec2d, v2 Vec2d) bool {
 func (v Vec2d) NonZero() bool {
 	return integer.Positive(v.x) > 0 || integer.Positive(v.y) > 0
 }
+
+func (v Vec2d) ScaledTo(other Vec2d) int {
+	if !v.NonZero() {
+		return 0
+	}
+	if v.x != 0 {
+		return other.x / v.x
+	}
+	return other.y / v.y
+}
