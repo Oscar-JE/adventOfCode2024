@@ -2,6 +2,8 @@ package vec
 
 import (
 	"adventofcode/integer"
+	"strconv"
+	"strings"
 )
 
 type Vec2d struct {
@@ -71,4 +73,29 @@ func (v Vec2d) ScaledTo(other Vec2d) int {
 
 func (v Vec2d) FirstQuadrant() bool {
 	return v.x >= 0 && v.y >= 0
+}
+
+func Parse(rep string, delimitor string) Vec2d {
+	numbersAndExtras := strings.Split(rep, delimitor)
+	firstCoordAndExtras := numbersAndExtras[0]
+	secondCoordAndExtras := numbersAndExtras[1]
+	firstCoordrep := stripAwayNotNumbers(firstCoordAndExtras)
+	secondCoordrep := stripAwayNotNumbers(secondCoordAndExtras)
+	num0, err0 := strconv.Atoi(firstCoordrep)
+	num1, err1 := strconv.Atoi(secondCoordrep)
+	if err0 != nil || err1 != nil {
+		panic("conversion of coordinates failed")
+	}
+	return Init(num0, num1)
+}
+
+func stripAwayNotNumbers(in string) string {
+	outStr := ""
+	for _, ch := range in {
+		_, err := strconv.Atoi(string(ch))
+		if err == nil || ch == '-' {
+			outStr = outStr + string(ch)
+		}
+	}
+	return outStr
 }
