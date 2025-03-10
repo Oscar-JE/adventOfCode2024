@@ -10,7 +10,7 @@ func TestEx1(t *testing.T) {
 	b := InitBut(vec.Init(22, 67), 1)
 	pair := ButtonPair{a, b}
 	target := vec.Init(8400, 5400)
-	res := minimumCost(pair, target)
+	res := MinimumCost(pair, target)
 	if res != 280 {
 		t.Errorf("wrong number of tokens on first example")
 	}
@@ -21,7 +21,7 @@ func TestEx2(t *testing.T) {
 	b := InitBut(vec.Init(67, 21), 1)
 	pair := ButtonPair{a, b}
 	target := vec.Init(12748, 12176)
-	res := minimumCost(pair, target)
+	res := MinimumCost(pair, target)
 	if res != 0 {
 		t.Errorf("wrong number of tokens on second example")
 	}
@@ -32,7 +32,7 @@ func TestEx3(t *testing.T) {
 	b := InitBut(vec.Init(84, 37), 1)
 	pair := ButtonPair{a, b}
 	target := vec.Init(7870, 6450)
-	res := minimumCost(pair, target)
+	res := MinimumCost(pair, target)
 	if res != 200 {
 		t.Errorf("wrong number of tokens on third example")
 	}
@@ -43,7 +43,7 @@ func TestEx4(t *testing.T) {
 	b := InitBut(vec.Init(27, 71), 1)
 	pair := ButtonPair{a, b}
 	target := vec.Init(18641, 10279)
-	res := minimumCost(pair, target)
+	res := MinimumCost(pair, target)
 	if res != 0 {
 		t.Errorf("wrong number of tokens on forth example")
 	}
@@ -54,7 +54,7 @@ func TestLinearDependent(t *testing.T) {
 	b := InitBut(vec.Init(1, 1), 1)
 	pair := ButtonPair{a, b}
 	target := vec.Init(8, 8)
-	res := minimumCost(pair, target)
+	res := MinimumCost(pair, target)
 	if res != 6 {
 		t.Errorf("wrong number of tokens on forth example")
 	}
@@ -65,7 +65,7 @@ func TestLinearDependent2(t *testing.T) {
 	b := InitBut(vec.Init(1, 1), 1)
 	pair := ButtonPair{a, b}
 	target := vec.Init(4, 4)
-	res := minimumCost(pair, target)
+	res := MinimumCost(pair, target)
 	if res != 4 {
 		t.Errorf("wrong number of tokens on linearly dependent 2 example")
 	}

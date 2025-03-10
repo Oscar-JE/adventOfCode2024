@@ -19,7 +19,11 @@ type ButtonPair struct {
 	b Button
 }
 
-func minimumCost(buttons ButtonPair, prize vec.Vec2d) int {
+func InitButtonPai(a Button, b Button) ButtonPair {
+	return ButtonPair{a: a, b: b}
+}
+
+func MinimumCost(buttons ButtonPair, prize vec.Vec2d) int {
 	movMatrix := matrix2x2.Init(buttons.a.movement, buttons.b.movement)
 	hasSolution := movMatrix.HasSolution(prize)
 	if !hasSolution {
