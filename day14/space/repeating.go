@@ -9,22 +9,29 @@ type RepeatingSpace struct {
 	lowerRightCorner vec.Vec2d
 }
 
+func (r RepeatingSpace) GetYLimit() int {
+	return r.lowerRightCorner.GetY()
+}
+
+func (r RepeatingSpace) GetXLimit() int {
+	return r.lowerRightCorner.GetX()
+}
+
 func InitRepeater(width int, height int) RepeatingSpace {
 	return RepeatingSpace{lowerRightCorner: vec.Init(height+1, width+1)}
 }
 
-func (s RepeatingSpace) internalPosition(unboandedPosition vec.Vec2d) vec.Vec2d {
+func (s RepeatingSpace) InternalPosition(unboandedPosition vec.Vec2d) vec.Vec2d {
 	xPos := limitAbove(unboandedPosition.GetX(), s.lowerRightCorner.GetX())
 	yPos := limitAbove(unboandedPosition.GetY(), s.lowerRightCorner.GetY())
 	return vec.Init(xPos, yPos)
 }
 
-func (s RepeatingSpace) Quadrant(position vec.Vec2d) (bool, quadrant.Quadrant) {
-	internalPosition := s.internalPosition(position)
-	overMidpoint := internalPosition.GetY() < s.lowerRightCorner.GetY()/2-1
-	belowMidPoint := s.lowerRightCorner.GetY()/2-1 < internalPosition.GetY()
-	leftSide := internalPosition.GetX() < s.lowerRightCorner.GetX()/2-1
-	rightSide := s.lowerRightCorner.GetX()/2-1 < internalPosition.GetX()
+func (s RepeatingSpace) Quadrant(positions vec.Vec2d) (bool, quadrant.Quadrant) {
+	overMidpoint := positions.GetY() < s.lowerRightCorner.GetY()/2-1
+	belowMidPoint := s.lowerRightCorner.GetY()/2-1 < positions.GetY()
+	leftSide := positions.GetX() < s.lowerRightCorner.GetX()/2-1
+	rightSide := s.lowerRightCorner.GetX()/2-1 < positions.GetX()
 	if overMidpoint && rightSide {
 		return true, quadrant.First()
 	} else if overMidpoint && leftSide {

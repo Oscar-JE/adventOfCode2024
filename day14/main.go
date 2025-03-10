@@ -2,7 +2,7 @@ package main
 
 import (
 	"adventofcode/day14/particle"
-	"adventofcode/day14/space"
+	"adventofcode/day14/roborally"
 	vec "adventofcode/geometry/vec2d"
 	"fmt"
 	"os"
@@ -19,25 +19,10 @@ func shortPart1() {
 		panic("file not found")
 	}
 	var robots []particle.Particle = parse(string(content))
-	playGround := space.InitRepeater(11, 7)
 	timeSteps := 100
-	fmt.Println(safetyScore(playGround, robots, timeSteps))
-}
-
-func safetyScore(sp space.RepeatingSpace, robots []particle.Particle, timeSteps int) int {
-	multArray := []int{0, 0, 0, 0}
-	for _, rob := range robots {
-		endPosition := rob.ProjectedPosition(timeSteps)
-		inQuadrant, quad := sp.Quadrant(endPosition)
-		if inQuadrant {
-			multArray[quad.Enumerate()] += 1
-		}
-	}
-	product := 1
-	for _, m := range multArray {
-		product *= m
-	}
-	return product
+	battle := roborally.Init(11, 7, robots)
+	fmt.Println(battle)
+	fmt.Println(battle.SafetyScore(timeSteps))
 }
 
 func parse(content string) []particle.Particle {
