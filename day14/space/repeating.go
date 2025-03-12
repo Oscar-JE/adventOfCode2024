@@ -18,7 +18,7 @@ func (r RepeatingSpace) GetXLimit() int {
 }
 
 func InitRepeater(width int, height int) RepeatingSpace {
-	return RepeatingSpace{lowerRightCorner: vec.Init(height+1, width+1)}
+	return RepeatingSpace{lowerRightCorner: vec.Init(width+1, height+1)}
 }
 
 func (s RepeatingSpace) InternalPosition(unboandedPosition vec.Vec2d) vec.Vec2d {
@@ -28,10 +28,10 @@ func (s RepeatingSpace) InternalPosition(unboandedPosition vec.Vec2d) vec.Vec2d 
 }
 
 func (s RepeatingSpace) Quadrant(positions vec.Vec2d) (bool, quadrant.Quadrant) {
-	overMidpoint := positions.GetY() < s.lowerRightCorner.GetY()/2-1
-	belowMidPoint := s.lowerRightCorner.GetY()/2-1 < positions.GetY()
-	leftSide := positions.GetX() < s.lowerRightCorner.GetX()/2-1
-	rightSide := s.lowerRightCorner.GetX()/2-1 < positions.GetX()
+	overMidpoint := positions.GetX() < s.lowerRightCorner.GetX()/2-1
+	belowMidPoint := s.lowerRightCorner.GetX()/2-1 < positions.GetX()
+	leftSide := positions.GetY() < s.lowerRightCorner.GetY()/2-1
+	rightSide := s.lowerRightCorner.GetY()/2-1 < positions.GetY()
 	if overMidpoint && rightSide {
 		return true, quadrant.First()
 	} else if overMidpoint && leftSide {
@@ -48,9 +48,9 @@ func limitAbove(toBeLimited int, upperLimit int) int {
 	if upperLimit < 1 {
 		panic("Funny why would you like to have an inverted intervale or empty?")
 	}
-	mod := toBeLimited % upperLimit
+	mod := toBeLimited % (upperLimit - 1)
 	if mod >= 0 {
 		return mod
 	}
-	return upperLimit + mod
+	return upperLimit - 1 + mod
 }

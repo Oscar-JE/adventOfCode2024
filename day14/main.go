@@ -14,13 +14,13 @@ func main() {
 }
 
 func shortPart1() {
-	content, fileErr := os.ReadFile("short.txt")
+	content, fileErr := os.ReadFile("long.txt")
 	if fileErr != nil {
 		panic("file not found")
 	}
 	var robots []particle.Particle = parse(string(content))
 	timeSteps := 100
-	battle := roborally.Init(11, 7, robots)
+	battle := roborally.Init(101, 103, robots)
 	fmt.Println(battle)
 	fmt.Println(battle.SafetyScore(timeSteps))
 }

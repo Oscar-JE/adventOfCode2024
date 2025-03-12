@@ -4,6 +4,7 @@ import (
 	"adventofcode/day14/particle"
 	"adventofcode/day14/space"
 	vec "adventofcode/geometry/vec2d"
+	"fmt"
 )
 
 type Arena struct {
@@ -18,6 +19,7 @@ func Init(width int, height int, robots []particle.Particle) Arena {
 func (a Arena) SafetyScore(timeSteps int) int {
 	multArray := []int{0, 0, 0, 0}
 	endPositions := a.endPositions(timeSteps)
+	fmt.Println(endPositions)
 	for _, endPosition := range endPositions {
 		inQuadrant, quad := a.area.Quadrant(endPosition)
 		if inQuadrant {
@@ -40,11 +42,11 @@ func (a Arena) endPositions(timeSteps int) []vec.Vec2d {
 	return endPositions
 }
 
-func (a Arena) String() string { //ska jag manipulera state trotts att jag egentligen inte behöver?
+func (a Arena) String() string {
 	rep := ""
-	for i := 0; i < a.area.GetXLimit(); i++ {
+	for i := 0; i < a.area.GetYLimit(); i++ {
 		lineRep := ""
-		for j := 0; j < a.area.GetYLimit(); j++ {
+		for j := 0; j < a.area.GetXLimit(); j++ {
 			lineRep += "."
 		}
 		rep += lineRep + "\r\n"
