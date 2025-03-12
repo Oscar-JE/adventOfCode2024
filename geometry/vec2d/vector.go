@@ -43,6 +43,10 @@ func DotProduct(a Vec2d, b Vec2d) int {
 	return a.x*b.x + a.y*b.y
 }
 
+func DistSquared(a Vec2d, b Vec2d) int {
+	return AbsSquared(Subtract(a, b))
+}
+
 func Turn90Down(v Vec2d) Vec2d {
 	return Init(v.y, -v.x)
 }
