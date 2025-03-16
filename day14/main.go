@@ -4,6 +4,7 @@ import (
 	"adventofcode/day14/particle"
 	"adventofcode/day14/roborally"
 	vec "adventofcode/geometry/vec2d"
+	"bufio"
 	"fmt"
 	"os"
 	"strings"
@@ -24,7 +25,9 @@ func part2() {
 	for time := range 1000000 {
 		if arena.MaybyTree(time) {
 			fmt.Println(time)
-			fmt.Println(arena.Rep(time))
+			arena.Rep(time)
+			input := bufio.NewScanner(os.Stdin)
+			input.Scan()
 			count++
 		}
 	}

@@ -4,6 +4,7 @@ import (
 	"adventofcode/day14/particle"
 	"adventofcode/day14/space"
 	vec "adventofcode/geometry/vec2d"
+	"fmt"
 )
 
 type Arena struct {
@@ -105,23 +106,21 @@ func (a Arena) endPositions(timeSteps int) []vec.Vec2d {
 	return endPositions
 }
 
-func (a Arena) Rep(timeStep int) string {
-	rep := ""
+func (a Arena) Rep(timeStep int) {
 	endPositions := a.endPositions(timeStep)
-	ylimit := 5
-	xLimeit := 10
+	ylimit := a.area.GetYLimit()
+	xLimeit := a.area.GetXLimit()
 	for i := 0; i < ylimit; i++ {
 		lineRep := ""
 		for j := 0; j < xLimeit; j++ {
 			if contains(i, j, endPositions) {
-				lineRep = "."
+				lineRep += "#"
 			} else {
 				lineRep += "."
 			}
 		}
-		rep += lineRep + "\n"
+		fmt.Println(lineRep)
 	}
-	return "The arena" + "\n" + rep
 }
 
 // var i eller j x ??
