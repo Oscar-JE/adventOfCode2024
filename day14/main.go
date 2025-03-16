@@ -10,10 +10,28 @@ import (
 )
 
 func main() {
-	shortPart1()
+	part2()
 }
 
-func shortPart1() {
+func part2() {
+	content, fileErr := os.ReadFile("long.txt")
+	if fileErr != nil {
+		panic("file not found")
+	}
+	var robots []particle.Particle = parse(string(content))
+	arena := roborally.Init(101, 103, robots)
+	count := 0
+	for time := range 1000000 {
+		if arena.MaybyTree(time) {
+			fmt.Println(time)
+			fmt.Println(arena.Rep(time))
+			count++
+		}
+	}
+	fmt.Printf("number of options: %d \r\n", count)
+}
+
+func part1() {
 	content, fileErr := os.ReadFile("long.txt")
 	if fileErr != nil {
 		panic("file not found")
