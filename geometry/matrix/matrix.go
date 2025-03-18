@@ -2,7 +2,6 @@ package matrix
 
 import "fmt"
 
-// ska vara generic som kräver comparabel
 type Matrix[C comparable] struct {
 	values []C
 	rows   int
