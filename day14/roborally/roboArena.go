@@ -63,21 +63,38 @@ func distanceScore(positions []vec.Vec2d) int {
 	return sum
 }
 
-func (a Arena) SafetyScore(timeSteps int) int {
+func (a Arena) quadrantNumbers(timeSteps int) []int {
 	multArray := []int{0, 0, 0, 0}
 	endPositions := a.endPositions(timeSteps)
-	fmt.Println(endPositions)
 	for _, endPosition := range endPositions {
 		inQuadrant, quad := a.area.Quadrant(endPosition)
 		if inQuadrant {
 			multArray[quad.Enumerate()] += 1
 		}
 	}
+	return multArray
+}
+
+func (a Arena) SafetyScore(timeSteps int) int {
+	multArray := a.quadrantNumbers(timeSteps)
 	product := 1
 	for _, m := range multArray {
 		product *= m
 	}
 	return product
+}
+
+func (a Arena) MaybyTree(timeSteps int) bool {
+	nrInQuadrants := a.quadrantNumbers(timeSteps)
+	return possiblySymmetric(nrInQuadrants) && bottomHeavy(nrInQuadrants)
+}
+
+func bottomHeavy(quadNumbers []int) bool {
+	return quadNumbers[0] < quadNumbers[3]
+}
+
+func possiblySymmetric(quadNumbers []int) bool {
+	return quadNumbers[0] == quadNumbers[1] && quadNumbers[2] == quadNumbers[3]
 }
 
 func (a Arena) endPositions(timeSteps int) []vec.Vec2d {
@@ -89,14 +106,30 @@ func (a Arena) endPositions(timeSteps int) []vec.Vec2d {
 	return endPositions
 }
 
-func (a Arena) String() string {
-	rep := ""
-	for i := 0; i < a.area.GetYLimit(); i++ {
+func (a Arena) Rep(timeStep int) {
+	endPositions := a.endPositions(timeStep)
+	ylimit := a.area.GetYLimit()
+	xLimeit := a.area.GetXLimit()
+	for i := 0; i < ylimit; i++ {
 		lineRep := ""
-		for j := 0; j < a.area.GetXLimit(); j++ {
-			lineRep += "."
+		for j := 0; j < xLimeit; j++ {
+			if contains(i, j, endPositions) {
+				lineRep += "#"
+			} else {
+				lineRep += "."
+			}
 		}
-		rep += lineRep + "\r\n"
+		fmt.Println(lineRep)
 	}
-	return "The arena" + "\r\n" + rep
+}
+
+// var i eller j x ??
+func contains(i int, j int, endPositions []vec.Vec2d) bool {
+	candidate := vec.Init(j, i)
+	for _, v := range endPositions {
+		if candidate == v {
+			return true
+		}
+	}
+	return false
 }

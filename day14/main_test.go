@@ -5,5 +5,9 @@ import (
 )
 
 func TestShortSimple(t *testing.T) {
-	shortPart1()
+	part1()
+}
+
+func TestPart2(t *testing.T) {
+	part2()
 }
