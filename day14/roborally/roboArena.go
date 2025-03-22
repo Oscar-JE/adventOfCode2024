@@ -21,7 +21,16 @@ type TimeAndDistanceScore struct {
 	distanceScore int
 }
 
-func (a Arena) SearTree() []TimeAndDistanceScore {
+func (a Arena) DisplayPossibleTrees() {
+	timesAndDistances := a.SearchTree()
+	for _, el := range timesAndDistances {
+		fmt.Printf("time iteration : %d \r\n", el.timeSteps)
+		fmt.Printf("distance score: %d \r\n", el.distanceScore)
+		a.Rep(el.timeSteps)
+	}
+}
+
+func (a Arena) SearchTree() []TimeAndDistanceScore {
 	timeAndDistanceScores := []TimeAndDistanceScore{}
 	for i := 0; i < 10; i++ {
 		distScore := distanceScore(a.endPositions(i))
@@ -47,6 +56,10 @@ func uppdateScoreList(list []TimeAndDistanceScore, val TimeAndDistanceScore) []T
 	if !shouldReplace {
 		return list
 	} else {
+		if replaceIndex == len(list)-1 {
+			list[replaceIndex] = val
+			return list
+		}
 		return append(append(list[0:replaceIndex], val), list[replaceIndex+1:len(list)-1]...)
 	}
 }
@@ -104,6 +117,19 @@ func (a Arena) endPositions(timeSteps int) []vec.Vec2d {
 		endPositions = append(endPositions, a.area.InternalPosition(endPosition))
 	}
 	return endPositions
+}
+
+func distanceScore2(vectors []vec.Vec2d) int {
+	sumVec := vec.Init(0, 0)
+	for _, v := range vectors {
+		sumVec = vec.Add(sumVec, v)
+	}
+	dist := 0
+	for _, v := range vectors {
+		scaled := vec.ScalarMult(len(vectors), v)
+		dist += vec.DistSquared(scaled, sumVec)
+	}
+	return dist
 }
 
 func (a Arena) Rep(timeStep int) {
