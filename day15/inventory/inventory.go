@@ -1,6 +1,7 @@
 package inventory
 
 import (
+	"adventofcode/day15/directions"
 	"adventofcode/day15/inventory/tile"
 	"adventofcode/geometry/matrix"
 	vec "adventofcode/geometry/vec2d"
@@ -29,4 +30,20 @@ func FromString(rep string) Inventory {
 	rowRobo, colRobo := tiling.FirstRowAndColOf(tile.Robot())
 	robotPos := vec.Init(rowRobo, colRobo)
 	return Inventory{space: tiling, robotPosition: robotPos}
+}
+
+func (i *Inventory) MoveRobot(direction directions.Direction) {
+	if i.blockedRobot(direction) {
+		return
+	} else {
+		i.forceMove(direction)
+	}
+}
+
+func (i Inventory) blockedRobot(direction directions.Direction) bool {
+	return false
+}
+
+func (i *Inventory) forceMove(direction directions.Direction) {
+	//lite signaturer nu kan vi skriva test
 }

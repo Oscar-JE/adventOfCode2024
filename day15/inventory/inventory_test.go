@@ -18,3 +18,7 @@ func TestFromString(t *testing.T) {
 	}
 	fmt.Println(inv)
 }
+
+func TestCanRobotMove(t *testing.T) {
+
+}
