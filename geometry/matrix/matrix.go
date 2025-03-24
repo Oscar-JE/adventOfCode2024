@@ -27,6 +27,12 @@ func (m Matrix[C]) indexFramRowAndCol(row int, col int) int {
 	return m.cols*row + col
 }
 
+func (m Matrix[C]) rowAndColFromIndex(index int) (int, int) {
+	row := index / m.cols
+	col := index - row*m.cols
+	return row, col
+}
+
 func (m Matrix[C]) Inside(row int, col int) bool {
 	return 0 <= row && row < m.rows && 0 <= col && col < m.cols
 }
@@ -65,4 +71,13 @@ func (m Matrix[C]) String() string {
 		retStr += "\r\n"
 	}
 	return retStr
+}
+
+func (m Matrix[C]) FirstRowAndColOf(sought C) (int, int) {
+	for i, el := range m.values {
+		if el == sought {
+			return m.rowAndColFromIndex(i)
+		}
+	}
+	panic("Sought value not found in matrix")
 }

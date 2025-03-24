@@ -13,3 +13,17 @@ func TestInitIntMatrix(t *testing.T) {
 		t.Errorf("get (1,1) unexpected")
 	}
 }
+
+func TestRowAndColFromIndex(t *testing.T) {
+	m := Init([]int{1, 2, 3, 4, 5, 6}, 3, 2)
+	index := 0
+	for i := range m.GetNrRows() {
+		for j := range m.GetNrCols() {
+			row, col := m.rowAndColFromIndex(index)
+			if row != i || col != j {
+				t.Errorf("row and col from index failed")
+			}
+			index++
+		}
+	}
+}

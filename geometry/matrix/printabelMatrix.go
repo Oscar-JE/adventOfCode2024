@@ -11,7 +11,7 @@ func InitPrintable[C PrintableComparable](values []C, rows int, cols int) Printa
 	if len(values) != rows*cols {
 		panic("unallowed matrix initialization")
 	}
-	return PrintableMatrix[C]{mat: Matrix[C]{values: values, rows: rows, cols: cols}} 
+	return PrintableMatrix[C]{mat: Matrix[C]{values: values, rows: rows, cols: cols}}
 }
 
 type PrintableMatrix[E PrintableComparable] struct {
@@ -20,12 +20,21 @@ type PrintableMatrix[E PrintableComparable] struct {
 
 func (m PrintableMatrix[E]) String() string {
 	rep := ""
-	for i := range m.mat.GetNrRows() {
+	for i := range m.mat.GetNrRows() - 1 {
 		lineRep := ""
 		for j := range m.mat.GetNrCols() {
 			lineRep += m.mat.Get(i, j).String()
 		}
 		rep += lineRep + "\r\n"
 	}
+	lineRep := ""
+	for j := range m.mat.GetNrCols() {
+		lineRep += m.mat.Get(m.mat.rows-1, j).String()
+	}
+	rep += lineRep
 	return rep
+}
+
+func (m PrintableMatrix[E]) FirstRowAndColOf(sought E) (int, int) {
+	return m.mat.FirstRowAndColOf(sought)
 }

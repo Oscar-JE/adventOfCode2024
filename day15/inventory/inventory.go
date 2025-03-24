@@ -9,7 +9,7 @@ import (
 
 type Inventory struct {
 	space         matrix.PrintableMatrix[tile.Tile]
-	robotPosition vec.Vec2d // Är endast en oprimering i frågan
+	robotPosition vec.Vec2d
 }
 
 func (i Inventory) String() string {
@@ -25,6 +25,8 @@ func FromString(rep string) Inventory {
 	for _, r := range vals {
 		tiles = append(tiles, tile.FromRune(r))
 	}
-	tiling = matrix.InitPrintable(tiles, nrRows, nrColumns)
-	tiling.
+	tiling := matrix.InitPrintable(tiles, nrRows, nrColumns)
+	rowRobo, colRobo := tiling.FirstRowAndColOf(tile.Robot())
+	robotPos := vec.Init(rowRobo, colRobo)
+	return Inventory{space: tiling, robotPosition: robotPos}
 }

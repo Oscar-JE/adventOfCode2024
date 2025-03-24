@@ -44,5 +44,8 @@ func (t Tile) String() string {
 	if t == Obstructed() {
 		return "#"
 	}
+	if t == Robot() {
+		return "@"
+	}
 	return ""
 }
