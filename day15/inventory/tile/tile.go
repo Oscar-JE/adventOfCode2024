@@ -31,7 +31,7 @@ func FromRune(r rune) Tile {
 	if r == '@' {
 		return Robot()
 	}
-	return Free() // kanske ska vara en panic för att undvika buggar
+	return Free()
 }
 
 func (t Tile) String() string {

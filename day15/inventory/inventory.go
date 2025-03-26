@@ -33,17 +33,46 @@ func FromString(rep string) Inventory {
 }
 
 func (i *Inventory) MoveRobot(direction directions.Direction) {
-	if i.blockedRobot(direction) {
-		return
-	} else {
+	if i.canRobotMoveToThe(direction) {
 		i.forceMove(direction)
 	}
 }
 
-func (i Inventory) blockedRobot(direction directions.Direction) bool {
-	return false
+func (i Inventory) canRobotMoveToThe(direction directions.Direction) bool {
+	currentPosition := vec.Add(i.robotPosition, vec.Vec2d(direction))
+	for i.tileAt(currentPosition) != tile.Free() {
+		t := i.tileAt(currentPosition)
+		if t == tile.Obstructed() {
+			return false
+		}
+		currentPosition = vec.Add(currentPosition, vec.Vec2d(direction))
+	}
+	return true
+}
+
+func (i Inventory) tileAt(position vec.Vec2d) tile.Tile {
+	return i.space.Get(position.GetX(), position.GetY())
+}
+
+func (i *Inventory) setTileAt(position vec.Vec2d, t tile.Tile) {
+	i.space.Set(position.GetX(), position.GetY(), t)
 }
 
 func (i *Inventory) forceMove(direction directions.Direction) {
-	//lite signaturer nu kan vi skriva test
+	nextRobotPosition := vec.Add(i.robotPosition, vec.Vec2d(direction))
+	i.setTileAt(i.robotPosition, tile.Free())
+	if i.tileAt(nextRobotPosition) == tile.Movable() {
+		pos := i.findNextFree(nextRobotPosition, direction)
+		i.setTileAt(pos, tile.Movable())
+	}
+	i.setTileAt(nextRobotPosition, tile.Robot())
+	i.robotPosition = nextRobotPosition
+}
+
+func (i Inventory) findNextFree(pos vec.Vec2d, dir directions.Direction) vec.Vec2d {
+	currentPosition := vec.Add(i.robotPosition, vec.Vec2d(dir))
+	for i.tileAt(currentPosition) != tile.Free() {
+		currentPosition = vec.Add(currentPosition, vec.Vec2d(dir))
+	}
+	return currentPosition
 }

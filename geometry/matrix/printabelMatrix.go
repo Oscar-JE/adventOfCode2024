@@ -18,6 +18,14 @@ type PrintableMatrix[E PrintableComparable] struct {
 	mat Matrix[E]
 }
 
+func (m PrintableMatrix[E]) Get(row int, col int) E {
+	return m.mat.Get(row, col)
+}
+
+func (m *PrintableMatrix[E]) Set(row int, col int, val E) {
+	m.mat.Set(row, col, val)
+}
+
 func (m PrintableMatrix[E]) String() string {
 	rep := ""
 	for i := range m.mat.GetNrRows() - 1 {
