@@ -1,6 +1,9 @@
 package matrix
 
-import "fmt"
+import (
+	vec "adventofcode/geometry/vec2d"
+	"fmt"
+)
 
 type PrintableComparable interface {
 	fmt.Stringer
@@ -45,4 +48,17 @@ func (m PrintableMatrix[E]) String() string {
 
 func (m PrintableMatrix[E]) FirstRowAndColOf(sought E) (int, int) {
 	return m.mat.FirstRowAndColOf(sought)
+}
+
+func (m PrintableMatrix[E]) PositionsOf(sought E) []vec.Vec2d {
+	positions := []vec.Vec2d{}
+	for i := range m.mat.rows {
+		for j := range m.mat.GetNrCols() {
+			elem := m.mat.Get(i, j)
+			if elem == sought {
+				positions = append(positions, vec.Init(i, j))
+			}
+		}
+	}
+	return positions
 }

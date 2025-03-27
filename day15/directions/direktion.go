@@ -19,3 +19,30 @@ func South() Direction {
 func West() Direction {
 	return Direction(vec.Init(0, -1))
 }
+
+func Init(r rune) Direction {
+
+	if r == '^' {
+		return North()
+	} else if r == '>' {
+		return East()
+	} else if r == 'v' {
+		return South()
+	} else if r == '<' {
+		return West()
+	}
+	panic("unalowed representation")
+}
+
+func (d Direction) String() string {
+	if d == North() {
+		return "^"
+	} else if d == East() {
+		return ">"
+	} else if d == South() {
+		return "v"
+	} else if d == West() {
+		return "<"
+	}
+	return ""
+}

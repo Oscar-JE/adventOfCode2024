@@ -33,3 +33,13 @@ func TestCanRobotMove(t *testing.T) {
 		t.Errorf("Should be an open path")
 	}
 }
+
+func TestForceMove(t *testing.T) {
+	rep := "###\r\n#.#\r\n#O#\r\n#@#\r\n###"
+	inv := FromString(rep)
+	println("--- before force move north ---")
+	fmt.Println(inv)
+	inv.forceMove(directions.North())
+	fmt.Println("--- after force move north ---")
+	fmt.Println(inv)
+}

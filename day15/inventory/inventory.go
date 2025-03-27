@@ -76,3 +76,7 @@ func (i Inventory) findNextFree(pos vec.Vec2d, dir directions.Direction) vec.Vec
 	}
 	return currentPosition
 }
+
+func (i Inventory) PositionsOfMovabel() []vec.Vec2d {
+	return i.space.PositionsOf(tile.Movable())
+}
