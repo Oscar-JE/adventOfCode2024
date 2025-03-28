@@ -80,3 +80,8 @@ func (i Inventory) findNextFree(pos vec.Vec2d, dir directions.Direction) vec.Vec
 func (i Inventory) PositionsOfMovabel() []vec.Vec2d {
 	return i.space.PositionsOf(tile.Movable())
 }
+
+func (i *Inventory) Expand() {
+	//todo expandera skiten
+	
+}

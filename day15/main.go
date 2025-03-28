@@ -10,7 +10,26 @@ import (
 )
 
 func main() {
-	bytes, fileErr := os.ReadFile("long.txt")
+	part2()
+}
+
+func part2() {
+	inv, _ := parse("short.txt")
+	fmt.Println(inv)
+}
+
+func part1() {
+	inv, forman := parse("long.txt")
+	for forman.HasNext() {
+		direct := forman.GetNext()
+		inv.MoveRobot(direct)
+	}
+	endPositions := inv.PositionsOfMovabel()
+	fmt.Println(score(endPositions))
+}
+
+func parse(filePath string) (inventory.Inventory, instructions.Foreman) {
+	bytes, fileErr := os.ReadFile(filePath)
 	if fileErr != nil {
 		panic("file was not found")
 	}
@@ -18,12 +37,7 @@ func main() {
 	spaceRepAndinstructionRep := strings.Split(content, "\r\n\r\n")
 	inv := inventory.FromString(spaceRepAndinstructionRep[0])
 	forman := instructions.InitFromRep(spaceRepAndinstructionRep[1])
-	for forman.HasNext() {
-		direct := forman.GetNext()
-		inv.MoveRobot(direct)
-	}
-	endPositions := inv.PositionsOfMovabel()
-	fmt.Println(score(endPositions))
+	return inv, forman
 }
 
 func score(positions []vec.Vec2d) int {
