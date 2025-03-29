@@ -39,15 +39,54 @@ func (i *Inventory) MoveRobot(direction directions.Direction) {
 }
 
 func (i Inventory) canRobotMoveToThe(direction directions.Direction) bool {
-	currentPosition := vec.Add(i.robotPosition, vec.Vec2d(direction))
-	for i.tileAt(currentPosition) != tile.Free() {
-		t := i.tileAt(currentPosition)
-		if t == tile.Obstructed() {
-			return false
+	currentRow := []vec.Vec2d{i.robotPosition}
+	for len(currentRow) > 0 {
+		for _, pos := range currentRow {
+			if i.tileAt(pos) == tile.Obstructed() {
+				return false
+			}
 		}
-		currentPosition = vec.Add(currentPosition, vec.Vec2d(direction))
+		currentRow = i.advanceRow(currentRow, direction)
 	}
 	return true
+}
+
+func (i Inventory) advanceRow(currentRow []vec.Vec2d, dir directions.Direction) []vec.Vec2d {
+	nextRow := []vec.Vec2d{}
+	for _, pos := range currentRow {
+		nextPositions := i.advancePosition(pos, dir)
+		for _, p := range nextPositions {
+			if i.tileAt(p) != tile.Free() && !contains(nextRow, p) {
+				nextRow = append(nextRow, p)
+			}
+		}
+	}
+	return nextRow
+}
+
+func (i Inventory) advancePosition(position vec.Vec2d, dir directions.Direction) []vec.Vec2d {
+	horizontalMovement := vec.DotProduct(vec.Vec2d(dir), vec.Init(0, 1)) == 1 || vec.DotProduct(vec.Vec2d(dir), vec.Init(0, 1)) == -1
+	nextBase := vec.Add(position, vec.Vec2d(dir))
+	if horizontalMovement {
+		return []vec.Vec2d{nextBase}
+	}
+	t := i.tileAt(nextBase)
+	if t == tile.BoxLeft() {
+		return []vec.Vec2d{nextBase, vec.Add(nextBase, vec.Init(0, 1))}
+	}
+	if t == tile.BoxRight() {
+		return []vec.Vec2d{nextBase, vec.Add(nextBase, vec.Init(0, -1))}
+	}
+	return []vec.Vec2d{nextBase}
+}
+
+func contains(list []vec.Vec2d, el vec.Vec2d) bool {
+	for _, v := range list {
+		if v == el {
+			return true
+		}
+	}
+	return false
 }
 
 func (i Inventory) tileAt(position vec.Vec2d) tile.Tile {
@@ -56,6 +95,11 @@ func (i Inventory) tileAt(position vec.Vec2d) tile.Tile {
 
 func (i *Inventory) setTileAt(position vec.Vec2d, t tile.Tile) {
 	i.space.Set(position.GetX(), position.GetY(), t)
+}
+
+type tileAnPos struct {
+	t   tile.Tile
+	pos vec.Vec2d
 }
 
 func (i *Inventory) forceMove(direction directions.Direction) {

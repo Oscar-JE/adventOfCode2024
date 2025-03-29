@@ -10,7 +10,7 @@ import (
 )
 
 func main() {
-	part2()
+	part1()
 }
 
 func part2() {
