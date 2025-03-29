@@ -14,8 +14,17 @@ func main() {
 }
 
 func part2() {
-	inv, _ := parse("short.txt")
+	inv, forman := parse("short2.txt")
+	inv.Expand()
 	fmt.Println(inv)
+	order := 1
+	for forman.HasNext() {
+		direct := forman.GetNext()
+		inv.MoveRobot(direct)
+		fmt.Println(order)
+		fmt.Println(inv)
+		order++
+	}
 }
 
 func part1() {
