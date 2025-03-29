@@ -82,6 +82,16 @@ func (i Inventory) PositionsOfMovabel() []vec.Vec2d {
 }
 
 func (i *Inventory) Expand() {
-	//todo expandera skiten
-	
+	nrCols := 2 * i.space.GetNrCols()
+	nrRows := i.space.GetNrRows()
+	expanded := []tile.Tile{}
+	for row := range nrRows {
+		rowEntrys := i.space.GetRow(row)
+		for _, el := range rowEntrys {
+			expanded = append(expanded, el.Expand()...)
+		}
+	}
+	i.space = matrix.InitPrintable(expanded, nrRows, nrCols)
+	rowRobot, colRobot := i.space.FirstRowAndColOf(tile.Robot())
+	i.robotPosition = vec.Init(rowRobot, colRobot)
 }
