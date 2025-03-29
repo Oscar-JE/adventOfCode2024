@@ -97,20 +97,38 @@ func (i *Inventory) setTileAt(position vec.Vec2d, t tile.Tile) {
 	i.space.Set(position.GetX(), position.GetY(), t)
 }
 
-type tileAnPos struct {
+type tileAndPos struct {
 	t   tile.Tile
 	pos vec.Vec2d
 }
 
 func (i *Inventory) forceMove(direction directions.Direction) {
-	nextRobotPosition := vec.Add(i.robotPosition, vec.Vec2d(direction))
-	i.setTileAt(i.robotPosition, tile.Free())
-	if i.tileAt(nextRobotPosition) == tile.Movable() {
-		pos := i.findNextFree(nextRobotPosition, direction)
-		i.setTileAt(pos, tile.Movable())
+	firstLine := []tileAndPos{{t: i.tileAt(i.robotPosition), pos: i.robotPosition}}
+	secondLine := i.advanceTileAndPos(firstLine, direction) 
+	for len(firstLine) > 0 { // blir fel
+		for _, el := range firstLine {
+			i.setTileAt(el.pos, tile.Free())
+		}
+		for _, el := range firstLine {
+			pos := vec.Add(el.pos, vec.Vec2d(direction))
+			i.setTileAt(pos, el.t)
+		}
+		firstLine = secondLine
+		secondLine = i.advanceTileAndPos(firstLine, direction)
 	}
-	i.setTileAt(nextRobotPosition, tile.Robot())
-	i.robotPosition = nextRobotPosition
+}
+
+func (i *Inventory) advanceTileAndPos(tpos []tileAndPos, dir directions.Direction) []tileAndPos {
+	currentRow := []vec.Vec2d{}
+	for _, el := range tpos {
+		currentRow = append(currentRow, el.pos)
+	}
+	nextPos := i.advanceRow(currentRow, dir)
+	retV := []tileAndPos{}
+	for _, pos := range nextPos {
+		retV = append(retV, tileAndPos{pos: pos, t: i.tileAt(pos)})
+	}
+	return retV
 }
 
 func (i Inventory) findNextFree(pos vec.Vec2d, dir directions.Direction) vec.Vec2d {
