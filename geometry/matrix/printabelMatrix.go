@@ -62,3 +62,15 @@ func (m PrintableMatrix[E]) PositionsOf(sought E) []vec.Vec2d {
 	}
 	return positions
 }
+
+func (m PrintableMatrix[E]) GetNrRows() int {
+	return m.mat.GetNrRows()
+}
+
+func (m PrintableMatrix[E]) GetNrCols() int {
+	return m.mat.GetNrCols()
+}
+
+func (m PrintableMatrix[E]) GetRow(row int) []E {
+	return m.mat.GetRow(row)
+}
