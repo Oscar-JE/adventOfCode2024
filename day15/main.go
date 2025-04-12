@@ -10,11 +10,11 @@ import (
 )
 
 func main() {
-	part1()
+	part2()
 }
 
 func part2() {
-	inv, forman := parse("short2.txt")
+	inv, forman := parse("long.txt")
 	inv.Expand()
 	fmt.Println(inv)
 	order := 1
@@ -23,8 +23,10 @@ func part2() {
 		inv.MoveRobot(direct)
 		fmt.Println(order)
 		fmt.Println(inv)
+		fmt.Println(direct)
 		order++
 	}
+	fmt.Println(inv.Score())
 }
 
 func part1() {

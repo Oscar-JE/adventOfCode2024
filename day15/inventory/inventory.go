@@ -11,10 +11,61 @@ import (
 type Inventory struct {
 	space         matrix.PrintableMatrix[tile.Tile]
 	robotPosition vec.Vec2d
+	leftSides     []vec.Vec2d
 }
 
-func (i Inventory) String() string {
-	return i.space.String()
+func (inv Inventory) String() string {
+	rep := ""
+	for i := range inv.space.GetNrRows() - 1 {
+		lineRep := ""
+		for j := range inv.space.GetNrCols() {
+			position := vec.Init(i, j)
+			if inv.amongLefts(position) {
+				lineRep += tile.BoxLeft().String()
+			} else if position == inv.robotPosition {
+				lineRep += tile.Robot().String()
+			} else {
+				lineRep += inv.space.Get(i, j).String()
+			}
+		}
+		rep += lineRep + "\r\n"
+	}
+	lineRep := ""
+	for j := range inv.space.GetNrCols() {
+		position := vec.Init(inv.space.GetNrRows()-1, j)
+		if inv.amongLefts(position) {
+			lineRep += tile.BoxLeft().String()
+		} else {
+			lineRep += inv.space.Get(inv.space.GetNrRows()-1, j).String()
+		}
+	}
+	rep += lineRep
+	return rep
+}
+
+func (inv Inventory) amongLefts(pos vec.Vec2d) bool {
+	for _, leftSide := range inv.leftSides {
+		if leftSide == pos {
+			return true
+		}
+	}
+	return false
+}
+
+func (inv *Inventory) convertToPosititionsFomate() {
+	rows := inv.space.GetNrRows()
+	cols := inv.space.GetNrCols()
+	for i := range rows {
+		for j := range cols {
+			t := inv.space.Get(i, j)
+			if t == tile.BoxLeft() || t == tile.Movable() {
+				inv.space.Set(i, j, tile.Free())
+				inv.leftSides = append(inv.leftSides, vec.Init(i, j))
+			} else if t == tile.BoxRight() {
+				inv.space.Set(i, j, tile.Free())
+			}
+		}
+	}
 }
 
 func FromString(rep string) Inventory {
@@ -29,114 +80,68 @@ func FromString(rep string) Inventory {
 	tiling := matrix.InitPrintable(tiles, nrRows, nrColumns)
 	rowRobo, colRobo := tiling.FirstRowAndColOf(tile.Robot())
 	robotPos := vec.Init(rowRobo, colRobo)
-	return Inventory{space: tiling, robotPosition: robotPos}
+	tiling.Set(rowRobo, colRobo, tile.Free())
+	inv := Inventory{space: tiling, robotPosition: robotPos}
+	inv.convertToPosititionsFomate()
+	return inv
 }
 
 func (i *Inventory) MoveRobot(direction directions.Direction) {
-	if i.canRobotMoveToThe(direction) {
-		i.forceMove(direction)
+	relevantPositions := i.findRelevantPositions(direction)
+	for _, mem := range relevantPositions { // nu testar vi och gråter lite
+		*mem = vec.Add(vec.Vec2d(direction), *mem)
 	}
 }
 
-func (i Inventory) canRobotMoveToThe(direction directions.Direction) bool {
-	currentRow := []vec.Vec2d{i.robotPosition}
-	for len(currentRow) > 0 {
-		for _, pos := range currentRow {
-			if i.tileAt(pos) == tile.Obstructed() {
-				return false
+func (i *Inventory) findRelevantPositions(dir directions.Direction) []*vec.Vec2d {
+	queue := []*vec.Vec2d{&i.robotPosition}
+	found := []*vec.Vec2d{}
+	for len(queue) > 0 {
+		el := queue[0]
+		queue = queue[1:]
+		obstrction, childNodes := i.findDirektCollisions(el, dir)
+		if obstrction {
+			return []*vec.Vec2d{}
+		}
+		found = append(found, el)
+		queue = append(queue, childNodes...)
+	}
+	return found
+}
+
+func (inv *Inventory) findDirektCollisions(pos *vec.Vec2d, dir directions.Direction) (bool, []*vec.Vec2d) {
+	nextPos := vec.Add(*pos, vec.Vec2d(dir))
+	nextPositions := []vec.Vec2d{nextPos}
+	if *pos != inv.robotPosition {
+		candidate := vec.Add(nextPos, vec.Vec2d(directions.East()))
+		if candidate != *pos {
+			nextPositions = append(nextPositions, candidate)
+		}
+	}
+	retVec := []*vec.Vec2d{}
+	for _, nextPos := range nextPositions {
+		t := inv.space.Get(nextPos.GetX(), nextPos.GetY())
+		if t == tile.Obstructed() {
+			return true, []*vec.Vec2d{}
+		}
+		isLeftOrRight, leftRef := inv.findConnectedLeftPair(nextPos)
+		if isLeftOrRight && *leftRef != *pos {
+			if len(retVec) > 0 && retVec[0] == leftRef {
+				continue
 			}
-		}
-		currentRow = i.advanceRow(currentRow, direction)
-	}
-	return true
-}
-
-func (i Inventory) advanceRow(currentRow []vec.Vec2d, dir directions.Direction) []vec.Vec2d {
-	nextRow := []vec.Vec2d{}
-	for _, pos := range currentRow {
-		nextPositions := i.advancePosition(pos, dir)
-		for _, p := range nextPositions {
-			if i.tileAt(p) != tile.Free() && !contains(nextRow, p) {
-				nextRow = append(nextRow, p)
-			}
+			retVec = append(retVec, leftRef)
 		}
 	}
-	return nextRow
+	return false, retVec
 }
 
-func (i Inventory) advancePosition(position vec.Vec2d, dir directions.Direction) []vec.Vec2d {
-	horizontalMovement := vec.DotProduct(vec.Vec2d(dir), vec.Init(0, 1)) == 1 || vec.DotProduct(vec.Vec2d(dir), vec.Init(0, 1)) == -1
-	nextBase := vec.Add(position, vec.Vec2d(dir))
-	if horizontalMovement {
-		return []vec.Vec2d{nextBase}
-	}
-	t := i.tileAt(nextBase)
-	if t == tile.BoxLeft() {
-		return []vec.Vec2d{nextBase, vec.Add(nextBase, vec.Init(0, 1))}
-	}
-	if t == tile.BoxRight() {
-		return []vec.Vec2d{nextBase, vec.Add(nextBase, vec.Init(0, -1))}
-	}
-	return []vec.Vec2d{nextBase}
-}
-
-func contains(list []vec.Vec2d, el vec.Vec2d) bool {
-	for _, v := range list {
-		if v == el {
-			return true
+func (inv *Inventory) findConnectedLeftPair(pos vec.Vec2d) (bool, *vec.Vec2d) {
+	for index, left := range inv.leftSides {
+		if left == pos || left == vec.Add(vec.Vec2d(directions.West()), pos) {
+			return true, &inv.leftSides[index]
 		}
 	}
-	return false
-}
-
-func (i Inventory) tileAt(position vec.Vec2d) tile.Tile {
-	return i.space.Get(position.GetX(), position.GetY())
-}
-
-func (i *Inventory) setTileAt(position vec.Vec2d, t tile.Tile) {
-	i.space.Set(position.GetX(), position.GetY(), t)
-}
-
-type tileAndPos struct {
-	t   tile.Tile
-	pos vec.Vec2d
-}
-
-func (i *Inventory) forceMove(direction directions.Direction) {
-	firstLine := []tileAndPos{{t: i.tileAt(i.robotPosition), pos: i.robotPosition}}
-	secondLine := i.advanceTileAndPos(firstLine, direction) 
-	for len(firstLine) > 0 { // blir fel
-		for _, el := range firstLine {
-			i.setTileAt(el.pos, tile.Free())
-		}
-		for _, el := range firstLine {
-			pos := vec.Add(el.pos, vec.Vec2d(direction))
-			i.setTileAt(pos, el.t)
-		}
-		firstLine = secondLine
-		secondLine = i.advanceTileAndPos(firstLine, direction)
-	}
-}
-
-func (i *Inventory) advanceTileAndPos(tpos []tileAndPos, dir directions.Direction) []tileAndPos {
-	currentRow := []vec.Vec2d{}
-	for _, el := range tpos {
-		currentRow = append(currentRow, el.pos)
-	}
-	nextPos := i.advanceRow(currentRow, dir)
-	retV := []tileAndPos{}
-	for _, pos := range nextPos {
-		retV = append(retV, tileAndPos{pos: pos, t: i.tileAt(pos)})
-	}
-	return retV
-}
-
-func (i Inventory) findNextFree(pos vec.Vec2d, dir directions.Direction) vec.Vec2d {
-	currentPosition := vec.Add(i.robotPosition, vec.Vec2d(dir))
-	for i.tileAt(currentPosition) != tile.Free() {
-		currentPosition = vec.Add(currentPosition, vec.Vec2d(dir))
-	}
-	return currentPosition
+	return false, nil
 }
 
 func (i Inventory) PositionsOfMovabel() []vec.Vec2d {
@@ -154,6 +159,26 @@ func (i *Inventory) Expand() {
 		}
 	}
 	i.space = matrix.InitPrintable(expanded, nrRows, nrCols)
-	rowRobot, colRobot := i.space.FirstRowAndColOf(tile.Robot())
-	i.robotPosition = vec.Init(rowRobot, colRobot)
+	i.robotPosition = expandPosition(i.robotPosition)
+	i.expandLeftSides()
+}
+
+func (inv *Inventory) expandLeftSides() {
+	for i := range inv.leftSides {
+		inv.leftSides[i] = expandPosition(inv.leftSides[i])
+	}
+}
+
+func expandPosition(pos vec.Vec2d) vec.Vec2d {
+	x := pos.GetX()
+	y := pos.GetY() * 2
+	return vec.Init(x, y)
+}
+
+func (i Inventory) Score() int {
+	sum := 0
+	for _, pos := range i.leftSides {
+		sum += pos.GetX()*100 + pos.GetY()
+	}
+	return sum
 }

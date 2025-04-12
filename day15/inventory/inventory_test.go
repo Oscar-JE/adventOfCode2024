@@ -14,32 +14,46 @@ func TestFromString(t *testing.T) {
 		t.Errorf("robot parsed to wrong position")
 	}
 	writen := inv.String()
-	if writen != rep {
-		t.Errorf("to string not inverse of from string")
+	expected := "###\r\n#.#\r\n#[#\r\n#@#\r\n###"
+	if writen != expected {
+		t.Errorf("unexpected to string behaviour")
 	}
 	fmt.Println(inv)
 }
 
-func TestCanRobotMove(t *testing.T) {
+func TestExpandInventory(t *testing.T) {
 	rep := "###\r\n#.#\r\n#O#\r\n#@#\r\n###"
+	expected := "######\r\n##..##\r\n##[.##\r\n##@.##\r\n######"
 	inv := FromString(rep)
-	if inv.canRobotMoveToThe(directions.South()) {
-		t.Errorf("obstructed path")
-	} else if inv.canRobotMoveToThe(directions.East()) {
-		t.Errorf("obstructed path")
-	} else if inv.canRobotMoveToThe(directions.West()) {
-		t.Errorf("obstructed path")
-	} else if !inv.canRobotMoveToThe(directions.North()) {
-		t.Errorf("Should be an open path")
+	inv.Expand()
+	res := inv.String()
+	if expected != res {
+		t.Errorf("expanded string rep not what we expect")
 	}
 }
 
-func TestForceMove(t *testing.T) {
+func TestMoveRobotLeft(t *testing.T) {
 	rep := "###\r\n#.#\r\n#O#\r\n#@#\r\n###"
+	expected := "######\r\n##..##\r\n##[.##\r\n##@.##\r\n######"
 	inv := FromString(rep)
-	println("--- before force move north ---")
+	inv.Expand()
+	inv.MoveRobot(directions.East())
+	res := inv.String()
+	if expected != res {
+		t.Errorf("move left string rep not what we expect")
+	}
+}
+
+func TestMoveRobotNorth(t *testing.T) {
+	rep := "###\r\n#.#\r\n#O#\r\n#@#\r\n###"
+	expected := "######\r\n##[.##\r\n##@.##\r\n##..##\r\n######"
+	inv := FromString(rep)
+	inv.Expand()
 	fmt.Println(inv)
-	inv.forceMove(directions.North())
-	fmt.Println("--- after force move north ---")
+	inv.MoveRobot(directions.North())
 	fmt.Println(inv)
+	res := inv.String()
+	if expected != res {
+		t.Errorf("expanded string rep not what we expect")
+	}
 }
