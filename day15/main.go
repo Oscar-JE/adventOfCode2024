@@ -18,7 +18,9 @@ func part2() {
 	inv.Expand()
 	fmt.Println(inv)
 	order := 1
+	//sleepTime := time.Duration(500) * time.Millisecond
 	for forman.HasNext() {
+		//time.Sleep(sleepTime)
 		direct := forman.GetNext()
 		inv.MoveRobot(direct)
 		fmt.Println(order)

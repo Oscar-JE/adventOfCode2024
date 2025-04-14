@@ -18,10 +18,17 @@ func (inv Inventory) String() string {
 	rep := ""
 	for i := range inv.space.GetNrRows() - 1 {
 		lineRep := ""
+		previsousLeft := false
 		for j := range inv.space.GetNrCols() {
+			if previsousLeft {
+				lineRep += tile.BoxRight().String()
+				previsousLeft = false
+				continue
+			}
 			position := vec.Init(i, j)
 			if inv.amongLefts(position) {
 				lineRep += tile.BoxLeft().String()
+				previsousLeft = true
 			} else if position == inv.robotPosition {
 				lineRep += tile.Robot().String()
 			} else {

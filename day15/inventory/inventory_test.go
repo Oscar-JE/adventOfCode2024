@@ -14,7 +14,7 @@ func TestFromString(t *testing.T) {
 		t.Errorf("robot parsed to wrong position")
 	}
 	writen := inv.String()
-	expected := "###\r\n#.#\r\n#[#\r\n#@#\r\n###"
+	expected := "###\r\n#.#\r\n#[]\r\n#@#\r\n###"
 	if writen != expected {
 		t.Errorf("unexpected to string behaviour")
 	}
@@ -23,7 +23,7 @@ func TestFromString(t *testing.T) {
 
 func TestExpandInventory(t *testing.T) {
 	rep := "###\r\n#.#\r\n#O#\r\n#@#\r\n###"
-	expected := "######\r\n##..##\r\n##[.##\r\n##@.##\r\n######"
+	expected := "######\r\n##..##\r\n##[]##\r\n##@.##\r\n######"
 	inv := FromString(rep)
 	inv.Expand()
 	res := inv.String()
@@ -34,10 +34,10 @@ func TestExpandInventory(t *testing.T) {
 
 func TestMoveRobotLeft(t *testing.T) {
 	rep := "###\r\n#.#\r\n#O#\r\n#@#\r\n###"
-	expected := "######\r\n##..##\r\n##[.##\r\n##@.##\r\n######"
+	expected := "######\r\n##..##\r\n##[]##\r\n##@.##\r\n######"
 	inv := FromString(rep)
 	inv.Expand()
-	inv.MoveRobot(directions.East())
+	inv.MoveRobot(directions.West())
 	res := inv.String()
 	if expected != res {
 		t.Errorf("move left string rep not what we expect")
@@ -46,7 +46,7 @@ func TestMoveRobotLeft(t *testing.T) {
 
 func TestMoveRobotNorth(t *testing.T) {
 	rep := "###\r\n#.#\r\n#O#\r\n#@#\r\n###"
-	expected := "######\r\n##[.##\r\n##@.##\r\n##..##\r\n######"
+	expected := "######\r\n##[]##\r\n##@.##\r\n##..##\r\n######"
 	inv := FromString(rep)
 	inv.Expand()
 	fmt.Println(inv)
