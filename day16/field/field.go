@@ -7,6 +7,8 @@ import (
 	"strings"
 )
 
+var directions []vec.Vec2d = []vec.Vec2d{vec.Init(-1, 0), vec.Init(0, -1), vec.Init(1, 0), vec.Init(0, 1)}
+
 type field struct {
 	m matrix.Matrix[tile.Tile]
 }
@@ -53,12 +55,6 @@ func convertLineToString(row []tile.Tile) string {
 }
 
 func (f field) findAllNodePositions() []vec.Vec2d {
-	// hur gör man detta smidigt?
-	// enbart intressant för interna punkter
-	// sedan kolla antalet punkter som inte är väggar
-	// om inte två så kan det inte vara en koridor
-	// sednan måste det vara på en linje genom den aktuella punkten
-	// det borde fungera
 	points := []vec.Vec2d{}
 	for i := 1; i < f.m.GetNrRows(); i++ {
 		for j := 1; j < f.m.GetNrCols(); j++ {
@@ -71,22 +67,58 @@ func (f field) findAllNodePositions() []vec.Vec2d {
 	return points
 }
 
+func (f field) isFloor(point vec.Vec2d) bool {
+	return f.m.Get(point.GetX(), point.GetY()) == tile.Floor
+}
+
 func (f field) isNode(point vec.Vec2d) bool {
-	isFloor := f.m.Get(point.GetX(), point.GetY()) == tile.Floor
+	isFloor := f.isFloor(point)
 	if !isFloor {
 		return false
 	}
-	upp := vec.Init(-1, 0)
-	left := vec.Init(0, -1)
-	down := vec.Init(1, 0)
-	right := vec.Init(0, 1)
-	riktningar := []vec.Vec2d{upp, left, down, right}
-	antalÖppna := 0
-	for _, v := range riktningar {
+	return !f.straight(point)
+}
+
+func (f field) nrConnections(point vec.Vec2d) int {
+	nrConnectedFloor := 0
+	for _, v := range directions {
 		p := vec.Add(point, v)
-		if f.m.Get(p.GetX(), p.GetY()) == tile.Floor {
-			antalÖppna++
+		if f.isFloor(p) {
+			nrConnectedFloor++
 		}
 	}
-	return antalÖppna != 2
+	return nrConnectedFloor
+}
+
+func (f field) ConnectionDirs(point vec.Vec2d)
+
+func (f field) straight(point vec.Vec2d) bool {
+	nrCon := f.nrConnections(point)
+	if nrCon != 2 {
+		return false
+	}
+	var firstDirection vec.Vec2d
+	for _, v := range directions {
+		p := vec.Add(point, v)
+		if f.isFloor(p) {
+			firstDirection = v
+			break
+		}
+	}
+	flipped := vec.Flip(firstDirection)
+	straightAhead := vec.Add(point, flipped)
+	return f.isFloor(straightAhead)
+}
+
+type Connection struct {
+	start vec.Vec2d
+	dir   vec.Vec2d
+	len   int
+}
+
+func (f field) findAllConnections() []Connection {
+	nodes := f.findAllNodePositions()
+	for _, n := range nodes {
+
+	}
 }

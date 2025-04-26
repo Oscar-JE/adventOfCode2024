@@ -46,7 +46,7 @@ func TestIsNodeSimple(t *testing.T) {
 	field := Parse(rep)
 	node := field.isNode(vec.Init(1, 1))
 	if !node {
-		t.Errorf("misscategorization of center node")
+		t.Errorf("misscategorization of single eempty space")
 	}
 }
 

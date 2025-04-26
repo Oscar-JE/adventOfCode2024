@@ -51,6 +51,11 @@ func Turn90Down(v Vec2d) Vec2d {
 	return Init(v.y, -v.x)
 }
 
+func Flip(v Vec2d) Vec2d {
+	vTemp := Turn90Down(v)
+	return Turn90Down(vTemp)
+}
+
 func AbsSquared(v Vec2d) int {
 	return v.x*v.x + v.y*v.y
 }
