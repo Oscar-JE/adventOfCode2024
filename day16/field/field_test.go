@@ -58,3 +58,32 @@ func TestIsNodeCorner(t *testing.T) {
 		t.Errorf("misscategorization of corner")
 	}
 }
+
+func TestFindConnection(t *testing.T) {
+	rep := "###\r\n#.#\r\n###"
+	field := Parse(rep)
+	node := vec.Init(1, 1)
+	con := field.findConnection(node, vec.Init(0, 1))
+	if con.len != 0 {
+		t.Errorf("no path should have connection len zero")
+	}
+}
+
+func TestFindConnectionStraight(t *testing.T) {
+	rep := "#####\r\n#...#\r\n#####"
+	field := Parse(rep)
+	node := vec.Init(1, 1)
+	con := field.findConnection(node, vec.Init(0, 1))
+	if con.len != 2 {
+		t.Errorf("should be %d was %d ", 2, con.len)
+	}
+}
+
+func TestFindAllConnectionsSquare(t *testing.T) {
+	rep := "#####\r\n#...#\r\n#.#.#\r\n#...#\r\n#####"
+	field := Parse(rep)
+	cons := field.FindAllConnections()
+	if len(cons) != 8 {
+		t.Errorf("unexpected number oc connections in square case")
+	}
+}

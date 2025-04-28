@@ -63,3 +63,15 @@ func (o OrderedSet[E]) Has(element E) bool {
 func (o OrderedSet[E]) AsSlice() []E {
 	return o.elements
 }
+
+func (o OrderedSet[E]) Equal(other OrderedSet[E]) bool {
+	if len(o.elements) != len(other.elements) {
+		return false
+	}
+	for i, el := range o.elements {
+		if !o.comp.Equal(el, other.elements[i]) {
+			return false
+		}
+	}
+	return true
+}

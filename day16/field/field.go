@@ -90,7 +90,16 @@ func (f field) nrConnections(point vec.Vec2d) int {
 	return nrConnectedFloor
 }
 
-func (f field) ConnectionDirs(point vec.Vec2d)
+func (f field) ConnectionDirs(point vec.Vec2d) []vec.Vec2d {
+	dirs := []vec.Vec2d{}
+	for _, v := range directions {
+		p := vec.Add(point, v)
+		if f.isFloor(p) {
+			dirs = append(dirs, v)
+		}
+	}
+	return dirs
+}
 
 func (f field) straight(point vec.Vec2d) bool {
 	nrCon := f.nrConnections(point)
@@ -116,9 +125,39 @@ type Connection struct {
 	len   int
 }
 
-func (f field) findAllConnections() []Connection {
-	nodes := f.findAllNodePositions()
-	for _, n := range nodes {
+func (c Connection) GetStart() vec.Vec2d {
+	return c.start
+}
 
+func (c Connection) GetEnd() vec.Vec2d {
+	addVec := vec.ScalarMult(c.len, c.dir)
+	return vec.Add(c.start, addVec)
+}
+
+func (f field) FindAllConnections() []Connection {
+	nodes := f.findAllNodePositions()
+	connections := []Connection{}
+	for _, n := range nodes {
+		dirs := f.ConnectionDirs(n)
+		for _, d := range dirs {
+			connections = append(connections, f.findConnection(n, d))
+		}
 	}
+	return connections
+}
+
+func (f field) findConnection(node vec.Vec2d, direct vec.Vec2d) Connection {
+	steps := 0
+	currentPosition := node
+	for {
+		currentPosition = vec.Add(currentPosition, direct)
+		if !f.isFloor(currentPosition) {
+			break
+		}
+		steps++
+		if !f.straight(currentPosition) {
+			break
+		}
+	}
+	return Connection{node, direct, steps}
 }

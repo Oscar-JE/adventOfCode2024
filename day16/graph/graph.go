@@ -33,3 +33,13 @@ func (g Graph) String() string {
 	rep += fmt.Sprintf("%v", list)
 	return rep
 }
+
+func (g Graph) Equal(other Graph) bool {
+	if g.nrNodes != other.nrNodes {
+		return false
+	}
+	if !g.connections.Equal(other.connections) {
+		return false
+	}
+	return true
+}
