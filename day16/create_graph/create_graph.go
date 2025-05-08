@@ -6,7 +6,7 @@ import (
 	vec "adventofcode/geometry/vec2d"
 )
 
-func createGraph(fieldRep string) graph.Graph {
+func createGraph(fieldRep string) graph.Graph { // nej det här blir bara jobbigt
 	field := field.Parse(fieldRep)
 	cons := field.FindAllConnections()
 	return graphFromConnections(cons)
