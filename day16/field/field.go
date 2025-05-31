@@ -9,11 +9,11 @@ import (
 
 var directions []vec.Vec2d = []vec.Vec2d{vec.Init(-1, 0), vec.Init(0, -1), vec.Init(1, 0), vec.Init(0, 1)}
 
-type field struct {
+type Field struct {
 	m matrix.Matrix[tile.Tile]
 }
 
-func Parse(rep string) field {
+func Parse(rep string) Field {
 	lines := strings.Split(rep, "\r\n")
 	nrRows := len(lines)
 	if nrRows == 0 {
@@ -27,10 +27,10 @@ func Parse(rep string) field {
 		values = append(values, t)
 	}
 	m := matrix.Init(values, nrRows, nrCols)
-	return field{m: m}
+	return Field{m: m}
 }
 
-func (f field) String() string {
+func (f Field) String() string {
 	ret := ""
 	nrRows := f.m.GetNrRows()
 	if nrRows == 0 {
@@ -54,7 +54,7 @@ func convertLineToString(row []tile.Tile) string {
 	return ret
 }
 
-func (f field) findAllNodePositions() []vec.Vec2d {
+func (f Field) findAllNodePositions() []vec.Vec2d {
 	points := []vec.Vec2d{}
 	for i := 1; i < f.m.GetNrRows(); i++ {
 		for j := 1; j < f.m.GetNrCols(); j++ {
@@ -67,11 +67,11 @@ func (f field) findAllNodePositions() []vec.Vec2d {
 	return points
 }
 
-func (f field) isFloor(point vec.Vec2d) bool {
+func (f Field) isFloor(point vec.Vec2d) bool {
 	return f.m.Get(point.GetX(), point.GetY()) == tile.Floor
 }
 
-func (f field) isNode(point vec.Vec2d) bool {
+func (f Field) isNode(point vec.Vec2d) bool {
 	isFloor := f.isFloor(point)
 	if !isFloor {
 		return false
@@ -79,7 +79,7 @@ func (f field) isNode(point vec.Vec2d) bool {
 	return !f.straight(point)
 }
 
-func (f field) nrConnections(point vec.Vec2d) int {
+func (f Field) nrConnections(point vec.Vec2d) int {
 	nrConnectedFloor := 0
 	for _, v := range directions {
 		p := vec.Add(point, v)
@@ -90,7 +90,7 @@ func (f field) nrConnections(point vec.Vec2d) int {
 	return nrConnectedFloor
 }
 
-func (f field) ConnectionDirs(point vec.Vec2d) []vec.Vec2d {
+func (f Field) ConnectionDirs(point vec.Vec2d) []vec.Vec2d {
 	dirs := []vec.Vec2d{}
 	for _, v := range directions {
 		p := vec.Add(point, v)
@@ -101,7 +101,7 @@ func (f field) ConnectionDirs(point vec.Vec2d) []vec.Vec2d {
 	return dirs
 }
 
-func (f field) straight(point vec.Vec2d) bool {
+func (f Field) straight(point vec.Vec2d) bool {
 	nrCon := f.nrConnections(point)
 	if nrCon != 2 {
 		return false
@@ -134,7 +134,7 @@ func (c Connection) GetEnd() vec.Vec2d {
 	return vec.Add(c.start, addVec)
 }
 
-func (f field) FindAllConnections() []Connection {
+func (f Field) FindAllConnections() []Connection {
 	nodes := f.findAllNodePositions()
 	connections := []Connection{}
 	for _, n := range nodes {
@@ -146,7 +146,7 @@ func (f field) FindAllConnections() []Connection {
 	return connections
 }
 
-func (f field) findConnection(node vec.Vec2d, direct vec.Vec2d) Connection {
+func (f Field) findConnection(node vec.Vec2d, direct vec.Vec2d) Connection {
 	steps := 0
 	currentPosition := node
 	for {
