@@ -4,7 +4,7 @@ import vec "adventofcode/geometry/vec2d"
 
 type Direction vec.Vec2d
 
-func North() Direction {
+func North() Direction { // kan jag göra dessa till konstanter??
 	return Direction(vec.Init(-1, 0))
 }
 
@@ -45,4 +45,36 @@ func (d Direction) String() string {
 		return "<"
 	}
 	return ""
+}
+
+func (d Direction) TurnDown() Direction {
+	if d == North() {
+		return East()
+	}
+	if d == East() {
+		return South()
+	}
+	if d == South() {
+		return West()
+	}
+	if d == West() {
+		return North()
+	}
+	panic("the list above needs to be exhaustive")
+}
+
+func (d Direction) TurnUp() Direction {
+	if d == North() {
+		return West()
+	}
+	if d == West() {
+		return South()
+	}
+	if d == South() {
+		return East()
+	}
+	if d == East() {
+		return North()
+	}
+	panic("the list above needs to be exhaustive")
 }

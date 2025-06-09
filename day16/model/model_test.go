@@ -6,7 +6,16 @@ import (
 	"testing"
 )
 
-func winningTest(t *testing.T) {
+func TestLosing(t *testing.T) {
 	m := Init("###\r\n#.#\r\n###")
-	m.winning(State{vec.Init(1, 1), directions.Init()})
+	if !m.winning(State{vec.Init(1, 1), directions.East()}) {
+		t.Errorf("not winning")
+	}
+}
+
+func TestWinning(t *testing.T) {
+	m := Init("###\r\n#E#\r\n###")
+	if m.winning(State{vec.Init(1, 1), directions.East()}) {
+		t.Errorf("is winning")
+	}
 }
