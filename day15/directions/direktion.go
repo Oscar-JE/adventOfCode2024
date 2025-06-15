@@ -4,7 +4,7 @@ import vec "adventofcode/geometry/vec2d"
 
 type Direction vec.Vec2d
 
-func North() Direction { // kan jag göra dessa till konstanter??
+func North() Direction {
 	return Direction(vec.Init(-1, 0))
 }
 

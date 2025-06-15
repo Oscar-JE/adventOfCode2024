@@ -75,12 +75,12 @@ func (f Field) findAllNodePositions() []vec.Vec2d {
 	return points
 }
 
-func (f Field) isFloor(point vec.Vec2d) bool {
+func (f Field) IsFloor(point vec.Vec2d) bool {
 	return f.m.Get(point.GetX(), point.GetY()) == tile.Floor
 }
 
 func (f Field) isNode(point vec.Vec2d) bool {
-	isFloor := f.isFloor(point)
+	isFloor := f.IsFloor(point)
 	if !isFloor {
 		return false
 	}
@@ -91,7 +91,7 @@ func (f Field) nrConnections(point vec.Vec2d) int {
 	nrConnectedFloor := 0
 	for _, v := range directions {
 		p := vec.Add(point, v)
-		if f.isFloor(p) {
+		if f.IsFloor(p) {
 			nrConnectedFloor++
 		}
 	}
@@ -102,7 +102,7 @@ func (f Field) ConnectionDirs(point vec.Vec2d) []vec.Vec2d {
 	dirs := []vec.Vec2d{}
 	for _, v := range directions {
 		p := vec.Add(point, v)
-		if f.isFloor(p) {
+		if f.IsFloor(p) {
 			dirs = append(dirs, v)
 		}
 	}
@@ -117,14 +117,14 @@ func (f Field) straight(point vec.Vec2d) bool {
 	var firstDirection vec.Vec2d
 	for _, v := range directions {
 		p := vec.Add(point, v)
-		if f.isFloor(p) {
+		if f.IsFloor(p) {
 			firstDirection = v
 			break
 		}
 	}
 	flipped := vec.Flip(firstDirection)
 	straightAhead := vec.Add(point, flipped)
-	return f.isFloor(straightAhead)
+	return f.IsFloor(straightAhead)
 }
 
 type Connection struct {
@@ -159,7 +159,7 @@ func (f Field) findConnection(node vec.Vec2d, direct vec.Vec2d) Connection {
 	currentPosition := node
 	for {
 		currentPosition = vec.Add(currentPosition, direct)
-		if !f.isFloor(currentPosition) {
+		if !f.IsFloor(currentPosition) {
 			break
 		}
 		steps++
