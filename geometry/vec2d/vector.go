@@ -60,6 +60,10 @@ func AbsSquared(v Vec2d) int {
 	return v.x*v.x + v.y*v.y
 }
 
+func L1Dist(v Vec2d) int {
+	return integer.ABS(v.x) + integer.ABS(v.y)
+}
+
 func Parallel(v1 Vec2d, v2 Vec2d) bool {
 	dotProd := DotProduct(v1, v2)
 	projectedLen := integer.Positive(dotProd)
