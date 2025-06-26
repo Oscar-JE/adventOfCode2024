@@ -41,3 +41,10 @@ func GCD(a int, b int) int {
 	remainder := remainder(a, b)
 	return GCD(b, remainder)
 }
+
+func ABS(a int) int {
+	if a < 0 {
+		return -a
+	}
+	return a
+}

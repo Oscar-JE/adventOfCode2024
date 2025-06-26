@@ -4,6 +4,8 @@ import vec "adventofcode/geometry/vec2d"
 
 type Direction vec.Vec2d
 
+const NrDirections = 4
+
 func North() Direction {
 	return Direction(vec.Init(-1, 0))
 }
@@ -77,4 +79,17 @@ func (d Direction) TurnUp() Direction {
 		return North()
 	}
 	panic("the list above needs to be exhaustive")
+}
+
+func Enumeration(dir Direction) int {
+	if dir == North() {
+		return 0
+	} else if dir == East() {
+		return 1
+	} else if dir == South() {
+		return 2
+	} else if dir == West() {
+		return 3
+	}
+	panic("should never reachthis state")
 }

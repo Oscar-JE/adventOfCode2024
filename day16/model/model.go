@@ -33,16 +33,15 @@ func (m *Model) StateTransition(state State, action Action) State {
 	panic("Action outside the action space have been taken as input")
 }
 
-func (m *Model) moveForward(state State) vec.Vec2d {
+func (m *Model) moveForward(state State) vec.Vec2d { //tar vi enbart ett steg i taget
 	currentPosition := state.position
 	if !m.internalRep.IsFloor(currentPosition) {
 		panic("impossible state passed to move forward")
 	}
 	dir := state.direction
 	next := vec.Add(currentPosition, vec.Vec2d(dir))
-	for m.internalRep.IsFloor(next) {
+	if m.internalRep.IsFloor(next) {
 		currentPosition = next
-		next = vec.Add(next, vec.Vec2d(dir))
 	}
 	return currentPosition
 }
@@ -51,7 +50,18 @@ func (m *Model) Cost(state State, action Action) float64 {
 	if m.Winning(state) {
 		return 0
 	}
-	return 0
+	if action == turnUp || action == turnDown {
+		return 1000
+	} else if action == forward {
+		return m.forewardCost(state)
+	}
+	panic("should necer reach this state")
+}
+
+func (m *Model) forewardCost(state State) float64 {
+	nextPos := m.moveForward(state)
+	firstPos := state.position
+	return float64(vec.L1Dist(vec.Subtract(nextPos, firstPos)))
 }
 
 func (m *Model) Winning(state State) bool {
