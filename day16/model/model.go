@@ -1,6 +1,7 @@
 package model
 
 import (
+	"adventofcode/day15/directions"
 	"adventofcode/day16/field"
 	vec "adventofcode/geometry/vec2d"
 )
@@ -66,4 +67,8 @@ func (m *Model) forewardCost(state State) float64 {
 
 func (m *Model) Winning(state State) bool {
 	return m.internalRep.IsPositionEnd(state.position)
+}
+
+func (m *Model) StartState() State { //todo skriv denna på riktigt
+	return InitState(vec.Init(9, 0), directions.North())
 }
