@@ -3,6 +3,7 @@ package model
 import (
 	"adventofcode/day15/directions"
 	"adventofcode/day16/field"
+	"adventofcode/day16/state"
 	vec "adventofcode/geometry/vec2d"
 )
 
@@ -15,31 +16,31 @@ func Init(raw string) Model {
 	return Model{internalRep: f}
 }
 
-func (m *Model) StateTransition(state State, action Action) State {
+func (m *Model) StateTransition(s state.State, action Action) state.State {
 	if action == turnDown {
-		dir := state.direction.TurnDown()
-		state.direction = dir
-		return state
+		dir := s.GetDirection().TurnDown()
+		s.SetDirection(dir)
+		return s
 	}
 	if action == turnUp {
-		dir := state.direction.TurnUp()
-		state.direction = dir
-		return state
+		dir := s.GetDirection().TurnUp()
+		s.SetDirection(dir)
+		return s
 	}
 	if action == forward {
-		position := m.moveForward(state)
-		state.position = position
-		return state
+		position := m.moveForward(s)
+		s.SetPosition(position)
+		return s
 	}
 	panic("Action outside the action space have been taken as input")
 }
 
-func (m *Model) moveForward(state State) vec.Vec2d { //tar vi enbart ett steg i taget
-	currentPosition := state.position
+func (m *Model) moveForward(s state.State) vec.Vec2d {
+	currentPosition := s.GetPosition()
 	if !m.internalRep.IsFloor(currentPosition) {
 		panic("impossible state passed to move forward")
 	}
-	dir := state.direction
+	dir := s.GetDirection()
 	next := vec.Add(currentPosition, vec.Vec2d(dir))
 	if m.internalRep.IsFloor(next) {
 		currentPosition = next
@@ -47,28 +48,28 @@ func (m *Model) moveForward(state State) vec.Vec2d { //tar vi enbart ett steg i 
 	return currentPosition
 }
 
-func (m *Model) Cost(state State, action Action) float64 {
-	if m.Winning(state) {
+func (m *Model) Cost(s state.State, action Action) float64 {
+	if m.Winning(s) {
 		return 0
 	}
 	if action == turnUp || action == turnDown {
 		return 1000
 	} else if action == forward {
-		return m.forewardCost(state)
+		return m.forewardCost(s)
 	}
 	panic("should necer reach this state")
 }
 
-func (m *Model) forewardCost(state State) float64 {
-	nextPos := m.moveForward(state)
-	firstPos := state.position
+func (m *Model) forewardCost(s state.State) float64 {
+	nextPos := m.moveForward(s)
+	firstPos := s.GetPosition()
 	return float64(vec.L1Dist(vec.Subtract(nextPos, firstPos)))
 }
 
-func (m *Model) Winning(state State) bool {
-	return m.internalRep.IsPositionEnd(state.position)
+func (m *Model) Winning(state state.State) bool {
+	return m.internalRep.IsPositionEnd(state.GetPosition())
 }
 
-func (m *Model) StartState() State { //todo skriv denna på riktigt
-	return InitState(vec.Init(9, 0), directions.North())
+func (m *Model) StartState() state.State { //todo skriv denna på riktigt
+	return state.Init(vec.Init(9, 0), directions.North())
 }

@@ -49,6 +49,32 @@ func (d Direction) String() string {
 	return ""
 }
 
+func (d Direction) Index() int {
+	if d == North() {
+		return 0
+	} else if d == East() {
+		return 1
+	} else if d == South() {
+		return 2
+	} else if d == West() {
+		return 3
+	}
+	panic("this should not be possible to happen")
+}
+
+func DirectionFromIndex(index int) Direction {
+	if index == 0 {
+		return North()
+	} else if index == 1 {
+		return East()
+	} else if index == 2 {
+		return South()
+	} else if index == 3 {
+		return West()
+	}
+	panic("this should not be possible to happen")
+}
+
 func (d Direction) TurnDown() Direction {
 	if d == North() {
 		return East()
