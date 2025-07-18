@@ -7,3 +7,5 @@ const (
 	turnDown Action = 1
 	forward  Action = 2
 )
+
+var ActionSpace []Action = []Action{forward, turnDown, turnUp}

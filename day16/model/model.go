@@ -16,6 +16,14 @@ func Init(raw string) Model {
 	return Model{internalRep: f}
 }
 
+func (m Model) GetNrRows() int {
+	return m.internalRep.GetNrRows()
+}
+
+func (m Model) GetNrCols() int {
+	return m.internalRep.GetNrCols()
+}
+
 func (m *Model) StateTransition(s state.State, action Action) state.State {
 	if action == turnDown {
 		dir := s.GetDirection().TurnDown()
@@ -37,12 +45,12 @@ func (m *Model) StateTransition(s state.State, action Action) state.State {
 
 func (m *Model) moveForward(s state.State) vec.Vec2d {
 	currentPosition := s.GetPosition()
-	if !m.internalRep.IsFloor(currentPosition) {
-		panic("impossible state passed to move forward")
+	if m.internalRep.IsFloor(currentPosition) {
+		return s.GetPosition()
 	}
 	dir := s.GetDirection()
 	next := vec.Add(currentPosition, vec.Vec2d(dir))
-	if m.internalRep.IsFloor(next) {
+	if !m.internalRep.IsFloor(next) {
 		currentPosition = next
 	}
 	return currentPosition
@@ -70,6 +78,6 @@ func (m *Model) Winning(state state.State) bool {
 	return m.internalRep.IsPositionEnd(state.GetPosition())
 }
 
-func (m *Model) StartState() state.State { //todo skriv denna på riktigt
+func (m *Model) StartState() state.State { //todo skriv denna på riktigt. Just vi behöver endstate också
 	return state.Init(vec.Init(9, 0), directions.North())
 }

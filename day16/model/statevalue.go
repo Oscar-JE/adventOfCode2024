@@ -2,8 +2,9 @@ package model
 
 import (
 	"adventofcode/day15/directions"
-	vec "adventofcode/geometry/vec2d"
 	"adventofcode/day16/state"
+	vec "adventofcode/geometry/vec2d"
+	"fmt"
 )
 
 type StateValue struct {
@@ -14,14 +15,17 @@ type StateValue struct {
 
 func InitValueFunc(nrRows int, nrCols int) StateValue {
 	stateValues := []float64{}
-	entrys := nrRows * nrCols
+	entrys := nrRows * nrCols * directions.NrDirections
 	for range entrys {
 		stateValues = append(stateValues, 0)
 	}
 	return StateValue{nrRows: nrRows, nrCols: nrCols, stateValues: stateValues}
 }
 
-func (v StateValue) GetValueOf(state  state.State) float64 {
+func (v StateValue) GetValueOf(state state.State) float64 {
+	if v.indexOfState(state) >= len(v.stateValues) {
+		fmt.Println(state)
+	}
 	return v.stateValues[v.indexOfState(state)]
 }
 
@@ -40,7 +44,7 @@ func (sv StateValue) StateFromIndex(index int) state.State {
 	var directionIndex = index % directions.NrDirections
 	var position vec.Vec2d = sv.positionFromIndex(positionIndex)
 	var direction directions.Direction = directions.DirectionFromIndex(directionIndex)
-	return  state.Init(position, direction)
+	return state.Init(position, direction)
 }
 
 func (sv StateValue) positionFromIndex(positionIndex int) vec.Vec2d {
@@ -51,4 +55,17 @@ func (sv StateValue) positionFromIndex(positionIndex int) vec.Vec2d {
 
 func (sv StateValue) indexFromPosition(position vec.Vec2d) int {
 	return position.GetX()*sv.nrCols + position.GetY()
+}
+
+func (sv StateValue) FirstState() state.State {
+	return sv.StateFromIndex(0)
+}
+
+func (sv StateValue) HasNext(s state.State) bool {
+	return s != state.Init(vec.Init(sv.nrRows, sv.nrCols), directions.DirectionFromIndex(directions.NrDirections-1))
+}
+
+func (sv StateValue) GetNext(s state.State) state.State {
+	index := sv.indexOfState(s) + 1
+	return sv.StateFromIndex(index)
 }

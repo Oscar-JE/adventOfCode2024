@@ -13,6 +13,14 @@ type Field struct {
 	m matrix.Matrix[tile.Tile]
 }
 
+func (f Field) GetNrRows() int {
+	return f.m.GetNrRows()
+}
+
+func (f Field) GetNrCols() int {
+	return f.m.GetNrCols()
+}
+
 func Parse(rep string) Field {
 	lines := strings.Split(rep, "\r\n")
 	nrRows := len(lines)
@@ -54,7 +62,7 @@ func (f Field) IsPositionStart(position vec.Vec2d) bool {
 	return f.m.Get(position.GetX(), position.GetY()) == tile.Start
 }
 
-func convertLineToString(row []tile.Tile) string {
+func convertLineToString(row []tile.Tile) string { // denna bör vi kunna ta bort
 	ret := ""
 	for _, el := range row {
 		ret += el.String()
