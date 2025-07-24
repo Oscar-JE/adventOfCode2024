@@ -5,6 +5,7 @@ import (
 	"adventofcode/day16/field"
 	"adventofcode/day16/state"
 	vec "adventofcode/geometry/vec2d"
+	"fmt"
 )
 
 type Model struct {
@@ -45,12 +46,12 @@ func (m *Model) StateTransition(s state.State, action Action) state.State {
 
 func (m *Model) moveForward(s state.State) vec.Vec2d {
 	currentPosition := s.GetPosition()
-	if m.internalRep.IsFloor(currentPosition) {
+	if !m.internalRep.IsFloor(currentPosition) {
 		return s.GetPosition()
 	}
 	dir := s.GetDirection()
 	next := vec.Add(currentPosition, vec.Vec2d(dir))
-	if !m.internalRep.IsFloor(next) {
+	if m.internalRep.IsFloor(next) {
 		currentPosition = next
 	}
 	return currentPosition
@@ -80,4 +81,8 @@ func (m *Model) Winning(state state.State) bool {
 
 func (m *Model) StartState() state.State { //todo skriv denna på riktigt. Just vi behöver endstate också
 	return state.Init(vec.Init(9, 0), directions.North())
+}
+
+func (m Model) String() string {
+	return fmt.Sprintln(m.internalRep)
 }

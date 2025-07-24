@@ -62,7 +62,7 @@ func (sv StateValue) FirstState() state.State {
 }
 
 func (sv StateValue) HasNext(s state.State) bool {
-	return s != state.Init(vec.Init(sv.nrRows, sv.nrCols), directions.DirectionFromIndex(directions.NrDirections-1))
+	return s != state.Init(vec.Init(sv.nrRows-1, sv.nrCols-1), directions.DirectionFromIndex(directions.NrDirections-1))
 }
 
 func (sv StateValue) GetNext(s state.State) state.State {

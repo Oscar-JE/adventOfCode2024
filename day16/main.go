@@ -35,7 +35,15 @@ func bellman(m model.Model, s state.State, sv model.StateValue) float64 {
 }
 
 func ActionStateValue(m model.Model, s state.State, a model.Action, sv model.StateValue) float64 {
+	var move bool = a == 2
+	if move {
+		fmt.Println("input state:" + fmt.Sprint(s))
+		fmt.Println("input action:" + a.Stirng())
+	}
 	nextState := m.StateTransition(s, a)
+	if move {
+		fmt.Println("next state:" + fmt.Sprint(nextState))
+	}
 	costTransition := m.Cost(s, model.ActionSpace[0])
 	firstCandidate := sv.GetValueOf(nextState) + costTransition
 	return firstCandidate

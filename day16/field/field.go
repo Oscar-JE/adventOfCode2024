@@ -54,7 +54,7 @@ func (f Field) String() string {
 	return ret
 }
 
-func (f Field) IsPositionEnd(position vec.Vec2d) bool { // kan ha skrivits rimligare
+func (f Field) IsPositionEnd(position vec.Vec2d) bool { 
 	return f.m.Get(position.GetX(), position.GetY()) == tile.End
 }
 
@@ -62,7 +62,7 @@ func (f Field) IsPositionStart(position vec.Vec2d) bool {
 	return f.m.Get(position.GetX(), position.GetY()) == tile.Start
 }
 
-func convertLineToString(row []tile.Tile) string { // denna bör vi kunna ta bort
+func convertLineToString(row []tile.Tile) string { 
 	ret := ""
 	for _, el := range row {
 		ret += el.String()

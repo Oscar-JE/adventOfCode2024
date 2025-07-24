@@ -9,3 +9,12 @@ const (
 )
 
 var ActionSpace []Action = []Action{forward, turnDown, turnUp}
+
+func (a Action) Stirng() string {
+	if a == turnUp {
+		return "turn up"
+	} else if a == turnDown {
+		return "turn down"
+	}
+	return "forward"
+}
