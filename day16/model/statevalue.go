@@ -5,6 +5,7 @@ import (
 	"adventofcode/day16/state"
 	vec "adventofcode/geometry/vec2d"
 	"fmt"
+	"strconv"
 )
 
 type StateValue struct {
@@ -68,4 +69,18 @@ func (sv StateValue) HasNext(s state.State) bool {
 func (sv StateValue) GetNext(s state.State) state.State {
 	index := sv.indexOfState(s) + 1
 	return sv.StateFromIndex(index)
+}
+
+func (sv StateValue) String() string {
+	
+	retStr := ""
+	for row := 0; row < sv.nrRows; row++ {
+		lowestRowindex := sv.indexOfState(state.Init(vec.Init(row, 0), directions.DirectionFromIndex(0)))
+		highestRowIndex := sv.indexOfState(state.Init(vec.Init(row, sv.nrCols-1), directions.DirectionFromIndex(directions.NrDirections)))
+		for positionIndex := lowestRowindex; positionIndex <= highestRowIndex; positionIndex++ {
+			retStr += strconv.FormatFloat(sv.stateValues[positionIndex], 'f', -1, 64)
+		}
+		retStr += "\n"
+	}
+	return retStr
 }

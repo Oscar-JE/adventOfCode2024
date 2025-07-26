@@ -17,33 +17,28 @@ func main() {
 	m := model.Init(content)
 	sv := model.InitValueFunc(m.GetNrRows(), m.GetNrCols())
 	s := sv.FirstState()
-	for sv.HasNext(s) {
-		valueFunc := bellman(m, s, sv)
-		sv.SetValueOf(s, valueFunc)
-		s = sv.GetNext(s)
+	for i := 0; i < 1000; i++ {
+		for sv.HasNext(s) {
+			valueFunc := bellman(m, s, sv)
+			sv.SetValueOf(s, valueFunc)
+			s = sv.GetNext(s)
+		}
+		s = sv.FirstState()
 	}
 	fmt.Println(sv)
 }
 
 func bellman(m model.Model, s state.State, sv model.StateValue) float64 {
-	actionValCandidate := ActionStateValue(m, s, model.ActionSpace[0], sv)
+	actionValCandidate := ActionStateValue(m, s, model.ActionSpace[0], &sv)
 	for i := 1; i < len(model.ActionSpace); i++ {
-		actionValLoop := ActionStateValue(m, s, model.ActionSpace[i], sv)
+		actionValLoop := ActionStateValue(m, s, model.ActionSpace[i], &sv)
 		actionValCandidate = min(actionValLoop, actionValCandidate)
 	}
 	return actionValCandidate
 }
 
-func ActionStateValue(m model.Model, s state.State, a model.Action, sv model.StateValue) float64 {
-	var move bool = a == 2
-	if move {
-		fmt.Println("input state:" + fmt.Sprint(s))
-		fmt.Println("input action:" + a.Stirng())
-	}
+func ActionStateValue(m model.Model, s state.State, a model.Action, sv *model.StateValue) float64 {
 	nextState := m.StateTransition(s, a)
-	if move {
-		fmt.Println("next state:" + fmt.Sprint(nextState))
-	}
 	costTransition := m.Cost(s, model.ActionSpace[0])
 	firstCandidate := sv.GetValueOf(nextState) + costTransition
 	return firstCandidate
