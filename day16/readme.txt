@@ -1,0 +1,1 @@
+dags att gå vidare. Har tröttnat på den här uppgiften och min approtch till den
