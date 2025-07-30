@@ -1,5 +1,7 @@
 package integer
 
+import "math"
+
 func NumberOfDigits(num int) int {
 	numDevisionBy10 := 0
 	for num/10 != 0 {
@@ -47,4 +49,8 @@ func ABS(a int) int {
 		return -a
 	}
 	return a
+}
+
+func ToThePowerOf(potens int, power int) int {
+	return int(math.Pow(float64(potens), float64(power)))
 }

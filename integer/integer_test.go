@@ -26,3 +26,10 @@ func TestGCD(t *testing.T) {
 		t.Errorf(" GCD 50,30 should be 10")
 	}
 }
+
+func TestPowerOf(t *testing.T) {
+	res := ToThePowerOf(2, 3)
+	if res != 8 {
+		t.Errorf("to the power of fails for input 2,3")
+	}
+}
