@@ -11,7 +11,7 @@ func InitOut(operand int) Out {
 }
 
 func (a Out) Out() int {
-	return 0
+	return a.op1 % 8
 }
 
 func (a Out) ResultStore() outid.OutId {

@@ -1,6 +1,9 @@
 package instructions
 
-import "adventofcode/day17/cpu/outid"
+import (
+	"adventofcode/day17/cpu/outid"
+	"adventofcode/integer"
+)
 
 type Cdv struct {
 	op1 int
@@ -12,9 +15,10 @@ func InitCdv(register int, operand int) Cdv {
 }
 
 func (a Cdv) Out() int {
-	return 0
+	denominator := integer.ToThePowerOf(2, a.op2)
+	return a.op1 / denominator
 }
 
 func (a Cdv) ResultStore() outid.OutId {
-	return outid.A
+	return outid.C
 }

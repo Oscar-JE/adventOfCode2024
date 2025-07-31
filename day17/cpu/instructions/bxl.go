@@ -1,8 +1,9 @@
 package instructions
 
-
-
-import "adventofcode/day17/cpu/outid"
+import (
+	"adventofcode/day17/cpu/outid"
+	"adventofcode/integer"
+)
 
 type Bxl struct {
 	op1 int
@@ -14,9 +15,9 @@ func InitBxl(register int, operand int) Bxl {
 }
 
 func (a Bxl) Out() int {
-	return 0
+	return integer.XOR(a.op1, a.op2)
 }
 
 func (a Bxl) ResultStore() outid.OutId {
-	return outid.A
+	return outid.B
 }

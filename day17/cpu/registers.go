@@ -20,12 +20,24 @@ func (r Registers) GetA() int {
 	return r.regs[0]
 }
 
+func (r *Registers) SetA(a int) {
+	r.regs[0] = a
+}
+
 func (r Registers) GetB() int {
 	return r.regs[1]
 }
 
+func (r *Registers) SetB(b int) {
+	r.regs[1] = b
+}
+
 func (r Registers) GetC() int {
 	return r.regs[2]
+}
+
+func (r *Registers) SetC(c int) {
+	r.regs[2] = c
 }
 
 func (r Registers) String() string {
@@ -70,7 +82,7 @@ func (r Registers) Eq(other Registers) bool {
 	return true
 }
 
-func (r Registers) CreateOperand(opcode int, operand int) Instruction {
+func (r Registers) CreateInstructionAndInput(opcode int, operand int) InstructionAndInput {
 	if opcode == 0 {
 		return instructions.InitAdv(r.GetA(), r.ComboOperandToValue(operand))
 	}
@@ -81,7 +93,8 @@ func (r Registers) CreateOperand(opcode int, operand int) Instruction {
 		return instructions.InitBst(r.ComboOperandToValue(operand))
 	}
 	if opcode == 3 {
-		return instructions.InitJnz(r.GetA(), operand)
+		j := instructions.InitJnz(r.GetA(), operand)
+		return &j
 	}
 	if opcode == 4 {
 		return instructions.InitBxc(r.GetB(), r.GetC())
@@ -95,6 +108,5 @@ func (r Registers) CreateOperand(opcode int, operand int) Instruction {
 	if opcode == 7 {
 		return instructions.InitCdv(r.GetA(), r.ComboOperandToValue(operand))
 	}
-
 	panic("no matching instructions")
 }

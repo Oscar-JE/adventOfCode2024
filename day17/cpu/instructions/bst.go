@@ -6,12 +6,12 @@ type Bst struct {
 	op1 int
 }
 
-func InitBst(operand int) Adv {
-	return Adv{op1: operand}
+func InitBst(operand int) Bst {
+	return Bst{op1: operand}
 }
 
 func (b Bst) Out() int {
-	return 0
+	return b.op1 % 8
 }
 
 func (b Bst) ResultStore() outid.OutId {
