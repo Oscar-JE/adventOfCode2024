@@ -33,3 +33,21 @@ func TestPowerOf(t *testing.T) {
 		t.Errorf("to the power of fails for input 2,3")
 	}
 }
+
+func TestXORcancelingOut(t *testing.T) {
+	inputs := []int{0, 1, 2, 3, 4, 10, 17, 185}
+	for _, v := range inputs {
+		if XOR(v, v) != 0 {
+			t.Errorf("XOR: canceling does not work for %d", v)
+		}
+	}
+}
+
+func TestXORaditives(t *testing.T) {
+	a := 2 + 4 + 16
+	b := 2 + 4 + 8 + 32
+	expected := 8 + 16 + 32
+	if XOR(a, b) != expected {
+		t.Errorf("examine xor additions")
+	}
+}

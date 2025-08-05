@@ -54,3 +54,7 @@ func ABS(a int) int {
 func ToThePowerOf(potens int, power int) int {
 	return int(math.Pow(float64(potens), float64(power)))
 }
+
+func XOR(a int, b int) int {
+	return a ^ b
+}
