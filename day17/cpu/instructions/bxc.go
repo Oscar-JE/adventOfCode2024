@@ -1,6 +1,9 @@
 package instructions
 
-import "adventofcode/day17/cpu/outid"
+import (
+	"adventofcode/day17/cpu/outid"
+	"adventofcode/integer"
+)
 
 type Bxc struct {
 	op1 int
@@ -12,9 +15,9 @@ func InitBxc(register int, operand int) Bxc {
 }
 
 func (a Bxc) Out() int {
-	return 0
+	return integer.XOR(a.op1, a.op2)
 }
 
 func (a Bxc) ResultStore() outid.OutId {
-	return outid.A
+	return outid.B
 }
