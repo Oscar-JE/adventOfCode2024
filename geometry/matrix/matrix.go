@@ -8,6 +8,16 @@ type Matrix[C comparable] struct {
 	cols   int
 }
 
+func InitSame[C comparable](rows int, cols int, v C) Matrix[C] {
+	nrElements := rows * cols
+	valus := []C{}
+	i := 0
+	for i < nrElements {
+		valus = append(valus, v)
+	}
+	return Init[C](valus, rows, cols)
+}
+
 func Init[C comparable](values []C, rows int, cols int) Matrix[C] {
 	if len(values) != rows*cols {
 		panic("unallowed matrix initialization")
@@ -80,4 +90,19 @@ func (m Matrix[C]) FirstRowAndColOf(sought C) (int, int) {
 		}
 	}
 	panic("Sought value not found in matrix")
+}
+
+func (m Matrix[C]) Eq(other Matrix[C]) bool {
+	if m.rows != other.rows {
+		return false
+	}
+	if m.cols != other.cols {
+		return false
+	}
+	for i, v := range m.values {
+		if v != other.values[i] {
+			return false
+		}
+	}
+	return true
 }
