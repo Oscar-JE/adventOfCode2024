@@ -14,6 +14,7 @@ func InitSame[C comparable](rows int, cols int, v C) Matrix[C] {
 	i := 0
 	for i < nrElements {
 		valus = append(valus, v)
+		i++
 	}
 	return Init[C](valus, rows, cols)
 }

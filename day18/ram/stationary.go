@@ -39,3 +39,7 @@ func (s StationaryRam) String() string {
 func (s StationaryRam) Eq(other StationaryRam) bool {
 	return s.m.Eq(other.m)
 }
+
+func (s StationaryRam) IsByteOk(position vec.Vec2d) bool {
+	return s.m.Inside(position.GetX(), position.GetY()) && s.m.Get(position.GetX(), position.GetY()) != '#'
+}

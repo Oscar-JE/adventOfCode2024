@@ -5,9 +5,48 @@ import (
 	"adventofcode/day18/ram"
 	"adventofcode/geometry/matrix"
 	vec "adventofcode/geometry/vec2d"
+	"fmt"
+	"os"
 	"strconv"
 	"strings"
 )
+
+func main() {
+	Part2()
+}
+
+func Part1() {
+	bytes, fileErr := os.ReadFile("input.txt")
+	if fileErr != nil {
+		panic("input file was not found")
+	}
+	coordinatesRep := string(bytes)
+	coordinates := ParseCoordList(coordinatesRep)
+	shortest := ShortestPathCornerToCorner(70, coordinates[:1024])
+	fmt.Println(shortest)
+}
+
+func Part2() {
+	bytes, fileErr := os.ReadFile("input.txt")
+	if fileErr != nil {
+		panic("input file was not found")
+	}
+	coordinatesRep := string(bytes)
+	coordinates := ParseCoordList(coordinatesRep)
+	var upper int = len(coordinates)
+	var lower int = 0
+	for lower != upper {
+		mid := (upper + lower) / 2
+		shortest := ShortestPathCornerToCorner(70, coordinates[:mid])
+		if shortest == -1 {
+			upper = mid
+		} else {
+			lower = mid + 1
+		}
+	}
+	var byte vec.Vec2d = coordinates[lower-1]
+	fmt.Printf("%d,%d \n", byte.GetY(), byte.GetX())
+}
 
 func ParseCoordList(rep string) []vec.Vec2d {
 	rows := strings.Split(rep, "\r\n")
@@ -19,7 +58,7 @@ func ParseCoordList(rep string) []vec.Vec2d {
 		if err1 != nil || err2 != nil {
 			panic("error parsing coordinate rows")
 		}
-		coords = append(coords, vec.Init(first, second))
+		coords = append(coords, vec.Init(second, first))
 	}
 	return coords
 }
@@ -34,7 +73,23 @@ func ShortestPathCornerToCorner(maxCoord int, deadSpots []vec.Vec2d) int {
 	for !pQueue.Empty() {
 		shortest, dist := pQueue.PopSmallestPriority()
 		shortestPaths.Set(shortest.GetX(), shortest.GetY(), dist)
-		// här ska vi generera nya platser att gå till
+		for _, dir := range directions {
+			newDistance := dist + 1
+			newPoint := vec.Add(shortest, dir)
+			if !field.IsByteOk(newPoint) {
+				continue
+			}
+			if shortestPaths.Get(newPoint.GetX(), newPoint.GetY()) != -1 {
+				continue
+			}
+			priority, seen := pQueue.GetPriority(newPoint)
+			if !seen {
+				pQueue.Add(newPoint, newDistance)
+			} else if newDistance < priority {
+				pQueue.UppdatePriority(newPoint, newDistance)
+			}
+		}
 	}
+	return shortestPaths.Get(maxCoord, maxCoord)
 
 }
