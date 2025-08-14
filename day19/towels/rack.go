@@ -31,3 +31,17 @@ func (t TowelRack) SolvablePattern(p Pattern) bool {
 	}
 	return solvable
 }
+
+func (t TowelRack) NumberOfSolutions(p Pattern) int {
+	if p.Empty() {
+		return 1
+	}
+	sum := 0
+	for _, pattern := range t.patterns {
+		index, match := p.matchBeginning(pattern)
+		if match {
+			sum += t.NumberOfSolutions(p.subPattern(index))
+		}
+	}
+	return sum
+}

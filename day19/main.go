@@ -11,9 +11,7 @@ func main() {
 	rack, patterns := parseInputFile("input.txt")
 	sum := 0
 	for _, p := range patterns {
-		if rack.SolvablePattern(p) {
-			sum++
-		}
+		sum += rack.NumberOfSolutions(p)
 	}
 	fmt.Println(sum)
 }
@@ -28,8 +26,8 @@ func parseInputFile(name string) (towels.TowelRack, []towels.Pattern) {
 }
 
 func parseInput(rep string) (towels.TowelRack, []towels.Pattern) {
-	splittedRackAndPatterns := strings.Split(rep, "\r\n\r\n")
-	return towels.ParseTowelRack(splittedRackAndPatterns[0]), parsePatterns(splittedRackAndPatterns[1])
+	splitRackAndPatterns := strings.Split(rep, "\r\n\r\n")
+	return towels.ParseTowelRack(splitRackAndPatterns[0]), parsePatterns(splitRackAndPatterns[1])
 }
 
 func parsePatterns(rep string) []towels.Pattern {

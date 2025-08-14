@@ -17,3 +17,11 @@ func TestSolution(t *testing.T) {
 		t.Errorf("three rs is possible to create")
 	}
 }
+
+func TestNrSolution(t *testing.T) {
+	rack := ParseTowelRack("r, wr, b, g, bwu, rb, gb, br")
+	pattern := ParsePattern("gbbr")
+	if rack.NumberOfSolutions(pattern) != 4 {
+		t.Errorf("Should have 4 solutions according to instructions")
+	}
+}
