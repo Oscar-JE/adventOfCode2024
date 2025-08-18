@@ -12,6 +12,7 @@ func main() {
 	sum := 0
 	for _, p := range patterns {
 		sum += rack.NumberOfSolutions(p)
+		fmt.Println(sum)
 	}
 	fmt.Println(sum)
 }

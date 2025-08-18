@@ -1,6 +1,9 @@
 package towels
 
-import "strings"
+import (
+	"fmt"
+	"strings"
+)
 
 type TowelRack struct {
 	patterns []Pattern
@@ -33,6 +36,16 @@ func (t TowelRack) SolvablePattern(p Pattern) bool {
 }
 
 func (t TowelRack) NumberOfSolutions(p Pattern) int {
+	m := make(map[string]int)
+	return t.numberOfSolutions(p, &m)
+}
+
+func (t TowelRack) numberOfSolutions(p Pattern, m *map[string]int) int {
+	key := fmt.Sprint(p)
+	nr, has := (*m)[key]
+	if has {
+		return nr
+	}
 	if p.Empty() {
 		return 1
 	}
@@ -40,8 +53,9 @@ func (t TowelRack) NumberOfSolutions(p Pattern) int {
 	for _, pattern := range t.patterns {
 		index, match := p.matchBeginning(pattern)
 		if match {
-			sum += t.NumberOfSolutions(p.subPattern(index))
+			sum += t.numberOfSolutions(p.subPattern(index), m)
 		}
 	}
+	(*m)[key] = sum
 	return sum
 }

@@ -1,6 +1,9 @@
 package towels
 
-import "testing"
+import (
+	"fmt"
+	"testing"
+)
 
 func TestMatchBeginningMatch(t *testing.T) {
 	p1 := ParsePattern("brwrr")
@@ -17,5 +20,13 @@ func TestMatchBeginningNoMatch(t *testing.T) {
 	_, match := p1.matchBeginning(p2)
 	if match {
 		t.Errorf("Match beginning false positive")
+	}
+}
+
+func TestParseAndStringify(t *testing.T) {
+	p := ParsePattern("hej")
+	rep := fmt.Sprint(p)
+	if rep != "hej" {
+		t.Errorf("whalabubu")
 	}
 }

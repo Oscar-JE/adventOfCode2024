@@ -31,3 +31,7 @@ func (p Pattern) subPattern(index int) Pattern {
 func (p Pattern) Empty() bool {
 	return len(p.colors) == 0
 }
+
+func (p Pattern) String() string {
+	return string(p.colors)
+}
