@@ -28,13 +28,20 @@ func finite(d int) Distance {
 }
 
 func DistanceToEnd(f field.Field) matrix.Matrix[Distance] {
+	return distanceToPoint(f, f.FindEnd())
+}
+
+func DistanceToStart(f field.Field) matrix.Matrix[Distance] {
+	return distanceToPoint(f, f.FindStart())
+}
+
+func distanceToPoint(f field.Field, p vec.Vec2d) matrix.Matrix[Distance] {
 	nrRows := f.GetNrRows()
 	nrCols := f.GetNrCols()
 	distances := matrix.InitSame(nrRows, nrCols, infinite())
-	ending := f.FindEnd()
 	dist := 0
 	directions := []vec.Vec2d{vec.Init(1, 0), vec.Init(0, 1), vec.Init(-1, 0), vec.Init(0, -1)}
-	epoch := []vec.Vec2d{ending}
+	epoch := []vec.Vec2d{p}
 	for len(epoch) > 0 {
 		for _, d := range epoch {
 			distance := finite(dist)

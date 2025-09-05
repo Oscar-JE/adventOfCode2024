@@ -15,6 +15,8 @@ func main() {
 	content := string(bytes)
 	f := field.Parse(content)
 	s := f.FindStart()
-	dists := distance.DistanceToEnd(f)
-	fmt.Println(dists.Get(s.GetX(), s.GetY()))
+	distsEnd := distance.DistanceToEnd(f)
+	distsStart := distance.DistanceToStart(f)
+	fmt.Println(distsStart.Get(s.GetX(), s.GetY()))
+	fmt.Println(distsEnd.Get(s.GetX(), s.GetY()))
 }

@@ -11,8 +11,10 @@ type cheat struct {
 	p2 vec.Vec2d
 }
 
-//oklart om ett hopp genom endast ett block ska räknas som ett eller två fusk
-
-func savedTimeByeCheat(distances matrix.Matrix[distance.Distance], c cheat) int {
-	return 5
+func distanceOfCheat(distsStart matrix.Matrix[distance.Distance], distsEnd matrix.Matrix[distance.Distance], c cheat) int {
+	distanceFromStart := distsStart.Get(c.p1.GetX(), c.p1.GetY())
+	distanceOfCheat := vec.L1Dist(vec.Subtract(c.p2, c.p1))
+	distanceToEnd := distsEnd.Get(c.p2.GetX(), c.p2.GetY())
+	// hantera den boxade typen distance
+	return distanceFromStart.
 }
