@@ -71,5 +71,5 @@ func (f Field) Inside(v vec.Vec2d) bool {
 }
 
 func (f Field) IsFloor(v vec.Vec2d) bool {
-	return f.m.Get(v.GetX(), v.GetY()) == floor || f.m.Get(v.GetX(), v.GetY()) == start
+	return f.m.Get(v.GetX(), v.GetY()) == floor || f.m.Get(v.GetX(), v.GetY()) == start || f.m.Get(v.GetX(), v.GetY()) == end
 }

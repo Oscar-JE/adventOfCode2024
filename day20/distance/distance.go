@@ -12,6 +12,18 @@ type Distance struct {
 	dist   int
 }
 
+func (d Distance) IsFinite() bool {
+	return d.finite
+}
+
+func (d Distance) Val() int {
+	return d.dist
+}
+
+func Init(val int) Distance {
+	return Distance{dist: val, finite: true}
+}
+
 func (d Distance) String() string {
 	if !d.finite {
 		return "i"
@@ -19,12 +31,23 @@ func (d Distance) String() string {
 	return strconv.Itoa(d.dist)
 }
 
-func infinite() Distance {
+func (d Distance) Finite() bool {
+	return d.finite
+}
+
+func Infinite() Distance {
 	return Distance{false, -1}
 }
 
-func finite(d int) Distance {
+func Finite(d int) Distance {
 	return Distance{true, d}
+}
+
+func Add(a Distance, b Distance) Distance {
+	if !a.finite || !b.finite {
+		return Infinite()
+	}
+	return Distance{dist: a.dist + b.dist, finite: true}
 }
 
 func DistanceToEnd(f field.Field) matrix.Matrix[Distance] {
@@ -38,13 +61,13 @@ func DistanceToStart(f field.Field) matrix.Matrix[Distance] {
 func distanceToPoint(f field.Field, p vec.Vec2d) matrix.Matrix[Distance] {
 	nrRows := f.GetNrRows()
 	nrCols := f.GetNrCols()
-	distances := matrix.InitSame(nrRows, nrCols, infinite())
+	distances := matrix.InitSame(nrRows, nrCols, Infinite())
 	dist := 0
 	directions := []vec.Vec2d{vec.Init(1, 0), vec.Init(0, 1), vec.Init(-1, 0), vec.Init(0, -1)}
 	epoch := []vec.Vec2d{p}
 	for len(epoch) > 0 {
 		for _, d := range epoch {
-			distance := finite(dist)
+			distance := Finite(dist)
 			distances.Set(d.GetX(), d.GetY(), distance)
 		}
 		nextEpoch := []vec.Vec2d{}

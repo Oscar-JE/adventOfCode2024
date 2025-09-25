@@ -9,14 +9,14 @@ import (
 func TestFindDistanceMatrixSymmetric(t *testing.T) {
 	f := field.Parse("####\r\n#S.#\r\n#.E#")
 	dists := DistanceToEnd(f)
-	if dists.Get(0, 0) != infinite() {
+	if dists.Get(0, 0) != Infinite() {
 		t.Errorf("stopped tiles can not reach the end")
 	}
 	fmt.Println(dists)
 }
 
 func TestFindDistanceMatrixNotSymmetric(t *testing.T) {
-	t.Skip("visual inspection look good")
+	//t.Skip("visual inspection look good")
 	f := field.Parse("#...#\r\n#S#.#\r\n#...#\r\n#..E#")
 	dists := DistanceToEnd(f)
 	fmt.Println(dists)
