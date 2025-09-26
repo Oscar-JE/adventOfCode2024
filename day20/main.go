@@ -30,5 +30,6 @@ func main() {
 			}
 		}
 	}
+	fmt.Println(len(cheats))
 	fmt.Println(count)
 }

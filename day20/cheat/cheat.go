@@ -4,6 +4,7 @@ import (
 	"adventofcode/day20/distance"
 	"adventofcode/geometry/matrix"
 	vec "adventofcode/geometry/vec2d"
+	"adventofcode/integer"
 )
 
 type cheat struct {
@@ -45,4 +46,29 @@ func AllPossibleCheats(nrRows int, nrCols int) []cheat {
 
 func inside(point vec.Vec2d, limit vec.Vec2d) bool {
 	return 0 <= point.GetX() && point.GetX() < limit.GetX() && 0 <= point.GetY() && point.GetY() < limit.GetY()
+}
+
+func l1RadiaWithMiddpoint(midPoint vec.Vec2d, l1Radia int) []vec.Vec2d {
+	unMovedArea := l1Area(l1Radia)
+	for i, el := range unMovedArea {
+		unMovedArea[i] = vec.Add(midPoint, el)
+	}
+	return unMovedArea
+}
+
+func l1Area(l1Radia int) []vec.Vec2d {
+	if l1Radia <= 0 {
+		return []vec.Vec2d{}
+	}
+	figure := []vec.Vec2d{}
+	row := -l1Radia
+	for row <= l1Radia {
+		colAbs := l1Radia - integer.ABS(row)
+		col := -colAbs
+		for col <= colAbs {
+			figure = append(figure, vec.Init(row, col))
+		}
+	}
+	return figure
+
 }
