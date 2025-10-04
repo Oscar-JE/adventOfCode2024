@@ -19,7 +19,7 @@ func main() {
 	distsEnd := distance.DistanceToEnd(f)
 	distsStart := distance.DistanceToStart(f)
 	orginalSolve := distsEnd.Get(s.GetX(), s.GetY()).Val()
-	cheats := cheat.AllPossibleCheats(distsEnd.GetNrRows(), distsEnd.GetNrCols())
+	cheats := cheat.AllPossibleCheats2(distsEnd.GetNrRows(), distsEnd.GetNrCols())
 	count := 0
 	for _, c := range cheats {
 		d := cheat.DistanceOfCheat(distsStart, distsEnd, c)

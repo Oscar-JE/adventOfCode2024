@@ -44,6 +44,23 @@ func AllPossibleCheats(nrRows int, nrCols int) []cheat {
 	return cheats
 }
 
+func AllPossibleCheats2(nrRows int, nrCols int) []cheat {
+	cheats := []cheat{}
+	limit := vec.Init(nrRows, nrCols)
+	for i := range nrRows {
+		for j := range nrCols {
+			start := vec.Init(i, j)
+			possibleEnds := l1RadiaWithMiddpoint(start, 6)
+			for _, end := range possibleEnds {
+				if inside(end, limit) {
+					cheats = append(cheats, cheat{p1: start, p2: end})
+				}
+			}
+		}
+	}
+	return cheats
+}
+
 func inside(point vec.Vec2d, limit vec.Vec2d) bool {
 	return 0 <= point.GetX() && point.GetX() < limit.GetX() && 0 <= point.GetY() && point.GetY() < limit.GetY()
 }
