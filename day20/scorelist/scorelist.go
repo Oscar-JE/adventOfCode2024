@@ -33,14 +33,27 @@ func Add(l1 ScoreList, l2 ScoreList) ScoreList {
 	for index1 != len(l1.scores) || index2 != len(l2.scores) {
 		if index1 == len(l1.scores) {
 			sumScores = append(sumScores, l2.scores[index2:]...)
+			break
 		}
 		if index2 == len(l2.scores) {
 			sumScores = append(sumScores, l1.scores[index1:]...)
+			break
 		}
-		//här händer det lite mer intresanta saker
 		sumScore1 := l1.scores[index1]
 		sumScore2 := l2.scores[index2]
-		if sumScore1.score // fortsätter hät senare
+		if sumScore1.score < sumScore2.score {
+			sumScores = append(sumScores, ScoreAndNumber{score: sumScore1.score, number: sumScore1.number})
+			index1++
+			continue
+		} else if sumScore1.score > sumScore2.score {
+			sumScores = append(sumScores, ScoreAndNumber{score: sumScore2.score, number: sumScore2.number})
+			index2++
+			continue
+		} else {
+			sumScores = append(sumScores, ScoreAndNumber{score: sumScore1.score, number: sumScore1.number + sumScore2.number})
+			index1++
+			index2++
+		}
 	}
 	return ScoreList{sumScores}
 }
