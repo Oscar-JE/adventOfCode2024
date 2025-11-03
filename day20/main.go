@@ -17,7 +17,7 @@ func main() {
 	f := field.Parse(content)
 	s := f.FindStart()
 	distsEnd := distance.DistanceToEnd(f)
-	distsStart := distance.DistanceToStart(f)
+	distsStart := distance.DistanceToStart(f) // här bör vi ha en loop över x och y värden istället om inte queue eller likanande konstruktion
 	orginalSolve := distsEnd.Get(s.GetX(), s.GetY()).Val()
 	cheats := cheat.AllPossibleCheats2(distsEnd.GetNrRows(), distsEnd.GetNrCols())
 	count := 0

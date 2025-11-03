@@ -29,7 +29,7 @@ var direct []vec.Vec2d = []vec.Vec2d{vec.Init(1, 0), vec.Init(0, 1), vec.Init(-1
 func AllPossibleCheats(nrRows int, nrCols int) []cheat {
 	cheats := []cheat{}
 	limit := vec.Init(nrRows, nrCols)
-	for i := range nrRows {
+	for i := range nrRows { // den här kan vi nu skriva om men frågan är om vi vill
 		for j := range nrCols {
 			start := vec.Init(i, j)
 			for _, v := range direct {
@@ -74,7 +74,7 @@ func l1RadiaWithMiddpoint(midPoint vec.Vec2d, l1Radia int) []vec.Vec2d {
 }
 
 func l1Area(l1Radia int) []vec.Vec2d {
-	if l1Radia <= 0 {
+	if l1Radia < 0 {
 		return []vec.Vec2d{}
 	}
 	figure := []vec.Vec2d{}
